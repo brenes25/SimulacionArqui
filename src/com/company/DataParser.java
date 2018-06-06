@@ -20,14 +20,10 @@ public class DataParser {
         BufferedReader br = null;
         FileReader fr = null;
         int instructionCounter = 0;
-
-
         InstructionBlock instructionBlock = new InstructionBlock();
-
         try {
             fr = new FileReader(filename);
             br = new BufferedReader(fr);
-
             String sCurrentLine;
             do{
                 sCurrentLine = br.readLine();
@@ -46,7 +42,6 @@ public class DataParser {
                     }
                     Instruction instruction = new Instruction(instructionList);
                     instructionBlock.getInstructions().add(instruction);
-
                     instructionCounter++;
                 }
             }while (sCurrentLine != null);
