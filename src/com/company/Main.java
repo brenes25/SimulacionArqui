@@ -9,5 +9,10 @@ public class Main {
         dataParser.parseFile("./src/resources/0.txt");
         processor.printInstructionMemory();
 
+        /*sig cosas a hacer
+          - crear las colas de context;
+          - agregarle el PC
+          - saber donde se empezo a guardar en la memoria
+          */
     }
 }
