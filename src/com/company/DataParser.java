@@ -20,6 +20,7 @@ public class DataParser {
         BufferedReader br = null;
         FileReader fr = null;
         int instructionCounter = 0;
+        int pc = (this.processor.getInstructionMemory().size() * 16) + 384;
         InstructionBlock instructionBlock = new InstructionBlock();
         try {
             fr = new FileReader(filename);
@@ -45,6 +46,8 @@ public class DataParser {
                     instructionCounter++;
                 }
             }while (sCurrentLine != null);
+            Context newContext = new Context(pc,this.processor.getQuantum());
+            this.processor.getContextQueue().add(newContext);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

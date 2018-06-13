@@ -8,8 +8,10 @@ public class Main {
         DataParser dataParser= new DataParser(processor);
         dataParser.parseFile("./src/resources/0.txt");
         processor.printInstructionMemory();
+        Context context = (Context) processor.getContextQueue().poll();
+        System.out.println(context.getPc());
 
-        /*sig cosas a hacer
+        /*TODO
           - crear las colas de context;
           - agregarle el PC
           - saber donde se empezo a guardar en la memoria

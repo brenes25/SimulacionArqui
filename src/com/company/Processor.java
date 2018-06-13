@@ -82,4 +82,8 @@ public class Processor {
     public Core getCore1() {
         return core1;
     }
+
+    public List getInstructionMemory() {
+        return instructionMemory;
+    }
 }

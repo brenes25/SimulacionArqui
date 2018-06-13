@@ -13,4 +13,8 @@ public class Context {
         this.pc = pc;
         this.currentQuantum = currentQuantum;
     }
+
+    public int getPc() {
+        return pc;
+    }
 }
