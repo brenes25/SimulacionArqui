@@ -1,25 +1,19 @@
 package com.company.core;
 
-import com.company.blocks.DataBlock;
-import com.company.blocks.InstructionBlock;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.company.cache.DataCache;
+import com.company.cache.InstructionCache;
 
 public abstract class Core {
-    private List instructionsCache;
-    private List dataCache;
 
-    public Core() {
-        this.instructionsCache = new ArrayList<InstructionBlock>();
-        this.dataCache = new ArrayList<DataBlock>();
-    }
+    private DataCache dataCache;
+    private InstructionCache instructionCache;
 
-    public List getInstructionsCache() {
-        return instructionsCache;
-    }
-
-    public List getDataCache() {
+    public DataCache getDataCache() {
         return dataCache;
     }
+
+    public InstructionCache getInstructionCache() {
+        return instructionCache;
+    }
+
 }
