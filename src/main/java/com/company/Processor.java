@@ -22,24 +22,27 @@ public class Processor {
     private Core core0;
     private Core core1;
 
-    public Processor(){
+    private Object lock1;
+
+    public Processor() {
         this.mainMemory = new ArrayList<DataBlock>();
         this.instructionMemory = new ArrayList<InstructionBlock>();
 
         this.clock = 0;
         this.quantum = 0;
-        this.contextQueue  = new ArrayDeque<Context>();
+        this.contextQueue = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
 
-        this.core0 = new Core0();
+        this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1();
+
     }
 
-    public void addNewInstruction(InstructionBlock instructionBlock){
+    public void addNewInstruction(InstructionBlock instructionBlock) {
         this.instructionMemory.add(instructionBlock);
     }
 
-    public void printInstructionMemory (){
+    public void printInstructionMemory() {
         for (int i = 0; i < instructionMemory.size(); i++) {
             InstructionBlock instructionBlock = (InstructionBlock) instructionMemory.get(i);
             List instructionBlockList = instructionBlock.getInstructions();
@@ -68,11 +71,15 @@ public class Processor {
     }
 
     public Queue getContextQueue() {
-        return contextQueue;
+        synchronized (lock1) {
+            return contextQueue;
+        }
     }
 
     public List getFinishedContexts() {
-        return finishedContexts;
+        synchronized (lock1) {
+            return finishedContexts;
+        }
     }
 
     public Core getCore0() {
@@ -86,4 +93,5 @@ public class Processor {
     public List getInstructionMemory() {
         return instructionMemory;
     }
+
 }

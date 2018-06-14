@@ -17,4 +17,8 @@ public class Context {
     public int getPc() {
         return pc;
     }
+
+    public int getCurrentQuantum() {
+        return currentQuantum;
+    }
 }
