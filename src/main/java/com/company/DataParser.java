@@ -10,6 +10,9 @@ import java.util.List;
 
 public class DataParser {
 
+
+    private static final int INSTRUCTION_MEMORY_START = 384;
+    private static final int INSTRUCTON_BLOCK_SIZE = 16;
     private Processor processor;
 
     public DataParser(Processor processor) {
@@ -20,7 +23,7 @@ public class DataParser {
         BufferedReader br = null;
         FileReader fr = null;
         int instructionCounter = 0;
-        int pc = (this.processor.getInstructionMemory().size() * 16) + 384;
+        int pc = (this.processor.getInstructionMemory().size() * INSTRUCTON_BLOCK_SIZE) + INSTRUCTION_MEMORY_START;
         InstructionBlock instructionBlock = new InstructionBlock();
         try {
             fr = new FileReader(filename);
