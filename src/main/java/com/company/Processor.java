@@ -77,13 +77,7 @@ public class Processor {
     public void addNewInstruction(InstructionBlock instructionBlock){
         this.instructionMemory.add(instructionBlock);
     }
-
-
-
-    public void addNewInstruction(InstructionBlock instructionBlock){
-        this.instructionMemory.add(instructionBlock);
-    }
-
+    
     public List getMainMemory() {
         return mainMemory;
     }
