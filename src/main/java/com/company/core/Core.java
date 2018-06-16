@@ -5,8 +5,8 @@ import com.company.cache.InstructionCache;
 
 public abstract class Core {
 
-    private DataCache dataCache;
-    private InstructionCache instructionCache;
+    protected DataCache dataCache;
+    protected InstructionCache instructionCache;
 
     public DataCache getDataCache() {
         return dataCache;

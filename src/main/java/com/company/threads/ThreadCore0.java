@@ -15,6 +15,7 @@ public class ThreadCore0  implements Runnable{
     }
 
     public void run() {
+
     }
 
     public boolean isStalled() {

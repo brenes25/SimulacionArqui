@@ -1,11 +1,21 @@
 package com.company.cache;
 
 import com.company.blocks.InstructionBlock;
-import com.company.blocks.State;
 
 public class InstructionCacheBlock {
     private InstructionBlock instructionBlock;
     private int label;
-    private State state;
+
+    public InstructionCacheBlock(){
+        this.label = -1;
+    }
+
+    public InstructionBlock getInstructionBlock() {
+        return instructionBlock;
+    }
+
+    public int getLabel() {
+        return label;
+    }
 
 }

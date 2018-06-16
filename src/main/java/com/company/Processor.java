@@ -7,6 +7,7 @@ import com.company.core.Core0;
 import com.company.core.Core1;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class Processor {
 
@@ -25,17 +26,23 @@ public class Processor {
     private boolean start;
     private DataParser dataParser;
 
+    public CyclicBarrier cyclicBarrier;
+    public boolean bothCoresFinished;
+
+
+
     private Object lock1;
 
     public Processor() {
         this.mainMemory = new ArrayList<DataBlock>();
         this.instructionMemory = new ArrayList<InstructionBlock>();
         this.start = true;
+        this.bothCoresFinished = false;
         this.clock = 0;
         this.quantum = 0;
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
-
+        this.cyclicBarrier = new CyclicBarrier(3);
         dataParser = new DataParser(this);
         this.start();
         this.core0 = new Core0((Context) this.contextQueue.poll(), this);
@@ -72,6 +79,7 @@ public class Processor {
         }
         System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
         this.quantum = Integer.parseInt(input.nextLine());
+
     }
 
     public void addNewInstruction(InstructionBlock instructionBlock){
@@ -112,5 +120,11 @@ public class Processor {
 
     public List getInstructionMemory() {
         return instructionMemory;
+    }
+
+    public Context getNextContext(){
+        Context context = (Context) this.contextQueue.poll();
+        context.setCurrentQuantum(this.quantum);
+        return context;
     }
 }

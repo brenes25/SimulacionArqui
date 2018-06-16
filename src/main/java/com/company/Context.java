@@ -29,4 +29,8 @@ public class Context {
     public int getCurrentQuantum() {
         return currentQuantum;
     }
+
+    public void setCurrentQuantum(int currentQuantum) {
+        this.currentQuantum = currentQuantum;
+    }
 }

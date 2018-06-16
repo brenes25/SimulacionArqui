@@ -5,11 +5,15 @@ import com.company.Processor;
 import com.company.threads.ThreadCore0;
 import javafx.util.Pair;
 
+import java.util.concurrent.*;
+
 
 public class Core0 extends Core {
     private ThreadCore0 mainContext;
     private ThreadCore0 secondaryContext;
     private Processor processor;
+
+    public CyclicBarrier cyclicBarrier;
 
     private Pair reservedPosition;
 
@@ -18,12 +22,13 @@ public class Core0 extends Core {
         this.reservedPosition = new Pair<String, Integer>("", -1);
         this.mainContext = new ThreadCore0(context);
         this.processor = processor;
-
+        this.cyclicBarrier = processor.cyclicBarrier;
         Thread thread = new Thread(mainContext, "thread1");
         thread.start();
     }
 
     private void checkStatus() {
+
         if (this.mainContext.isStalled()) {                             //si el hilo principal entra en fallo
             if (this.secondaryContext.getContext() == null) {                        //no hay otro hilo en fallo
                 this.secondaryContext = this.mainContext;               //hago el cambio de contexto.

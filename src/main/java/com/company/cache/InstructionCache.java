@@ -9,4 +9,12 @@ public class InstructionCache {
     public InstructionCache (){
         this.cache = new ArrayList<InstructionCacheBlock>();
     }
+
+    public List getCache() {
+        return cache;
+    }
+
+    public void setCache(List cache) {
+        this.cache = cache;
+    }
 }

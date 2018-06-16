@@ -1,4 +1,13 @@
 package com.company.threads;
 
-public class MainThread {
+import java.util.concurrent.*;
+
+public class MainThread implements Runnable{
+
+    public CyclicBarrier cyclicBarrier;
+
+    @Override
+    public void run() {
+
+    }
 }
