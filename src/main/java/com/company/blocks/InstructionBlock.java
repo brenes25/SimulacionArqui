@@ -13,6 +13,14 @@ public class InstructionBlock {
         this.instructions = new ArrayList<Instruction>();
     }
 
+    public void addInstruction(Instruction instruction, int word){
+        this.instructions.add(word, instruction);
+    }
+
+    public Instruction getInstruction(int word){
+        return (Instruction) this.instructions.get(word);
+    }
+
     public List getInstructions() {
         return instructions;
     }

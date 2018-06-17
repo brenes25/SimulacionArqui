@@ -5,6 +5,7 @@ import com.company.blocks.InstructionBlock;
 import com.company.core.Core;
 import com.company.core.Core0;
 import com.company.core.Core1;
+import com.company.threads.MainThread;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,9 +30,12 @@ public class Processor {
     public CyclicBarrier cyclicBarrier;
     public boolean bothCoresFinished;
 
-
+    private Semaphore instructionBus;
+    private Semaphore dataBus;
 
     private Object lock1;
+
+    private MainThread mainThread;
 
     public Processor() {
         this.mainMemory = new ArrayList<DataBlock>();
@@ -43,11 +47,14 @@ public class Processor {
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
         this.cyclicBarrier = new CyclicBarrier(3);
-        dataParser = new DataParser(this);
+        this.dataParser = new DataParser(this);
         this.start();
         this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
+        Thread controllerTest = new Thread(mainThread);
 
+        this.instructionBus = new Semaphore(1, true);
+        this.dataBus = new Semaphore(1, true);
     }
 
 
@@ -85,7 +92,7 @@ public class Processor {
     public void addNewInstruction(InstructionBlock instructionBlock){
         this.instructionMemory.add(instructionBlock);
     }
-    
+
     public List getMainMemory() {
         return mainMemory;
     }
@@ -126,5 +133,13 @@ public class Processor {
         Context context = (Context) this.contextQueue.poll();
         context.setCurrentQuantum(this.quantum);
         return context;
+    }
+
+    public Semaphore getInstructionBus() {
+        return instructionBus;
+    }
+
+    public Semaphore getDataBus() {
+        return dataBus;
     }
 }

@@ -12,4 +12,9 @@ public class Instruction {
     public List getInstruction() {
         return instruction;
     }
+
+    public int getInstructionValue(int position){
+        return (Integer) this.instruction.get(position);
+
+    }
 }

@@ -14,5 +14,11 @@ public class DataCacheBlock {
         this.dataBlock = dataBlock;
         this.label = label;
         this.state = state;
+
+
+    }
+
+    public int getWordFromBlock(int word){
+        return this.dataBlock.getWord(word);
     }
 }
