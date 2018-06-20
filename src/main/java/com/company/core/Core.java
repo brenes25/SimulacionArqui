@@ -8,16 +8,6 @@ import com.company.cache.InstructionCache;
 
 public abstract class Core {
 
-    protected DataCache dataCache;
-    protected InstructionCache instructionCache;
-
-    public DataCache getDataCache() {
-        return dataCache;
-    }
-
-    public InstructionCache getInstructionCache() {
-        return instructionCache;
-    }
 
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;

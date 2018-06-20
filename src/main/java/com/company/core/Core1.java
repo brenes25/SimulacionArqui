@@ -19,8 +19,6 @@ public class Core1 extends Core{
         this.mainContext = new ThreadCore1(context, this);
         Thread thread = new Thread(this.mainContext, "threadC1");
         thread.start();
-        this.instructionCache = new InstructionCache();
-        this.dataCache = new DataCache();
     }
 
     public void checkStatus(){

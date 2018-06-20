@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.blocks.DataBlock;
 import com.company.blocks.InstructionBlock;
+import com.company.cache.*;
 import com.company.core.Core;
 import com.company.core.Core0;
 import com.company.core.Core1;
@@ -13,6 +14,12 @@ import java.util.concurrent.*;
 public class Processor {
 
     private static final String PATH = "./src/main/java/resources/";
+
+    private DataCache dataCacheCore0;
+    private InstructionCache instructionCacheCore0;
+
+    private DataCache dataCacheCore1;
+    private InstructionCache instructionCacheCore1;
 
     private List mainMemory;
     private List instructionMemory;
@@ -48,6 +55,10 @@ public class Processor {
         this.finishedContexts = new ArrayList<Context>();
         this.cyclicBarrier = new CyclicBarrier(4);
         this.dataParser = new DataParser(this);
+        this.dataCacheCore0 = new DataCache();
+        this.dataCacheCore1 = new DataCache();
+        this.instructionCacheCore0 = new InstructionCache();
+        this.instructionCacheCore1 = new InstructionCache();
         this.start();
         this.mainThread = new MainThread(this);
         Thread controllerTest = new Thread(mainThread);
@@ -148,5 +159,21 @@ public class Processor {
 
     public void setClock(int clock) {
         this.clock = clock;
+    }
+
+    public DataCache getDataCacheCore0() {
+        return dataCacheCore0;
+    }
+
+    public InstructionCache getInstructionCacheCore0() {
+        return instructionCacheCore0;
+    }
+
+    public DataCache getDataCacheCore1() {
+        return dataCacheCore1;
+    }
+
+    public InstructionCache getInstructionCacheCore1() {
+        return instructionCacheCore1;
     }
 }
