@@ -1,23 +1,36 @@
 package com.company.threads;
 
+import com.company.*;
+
 import java.util.concurrent.*;
 
 public class MainThread implements Runnable{
 
-    public CyclicBarrier cyclicBarrier;
+    private Processor processor;
 
-    public MainThread(CyclicBarrier cyclicBarrier){
-        this.cyclicBarrier = cyclicBarrier;
+    public MainThread(Processor processor){
+        this.processor = processor;
     }
 
     @Override
     public void run() {
+        try {
+            this.processor.cyclicBarrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
         //aumentar ciclos de reloj
+        processor.setClock(processor.getClock()+1);
         //llama a los check status
+        processor.getCore0().checkStatus();
+        processor.getCore1().checkStatus();
+
         //poner dos barreras
 
         try {
-            this.cyclicBarrier.await();
+            this.processor.cyclicBarrier.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (BrokenBarrierException e) {

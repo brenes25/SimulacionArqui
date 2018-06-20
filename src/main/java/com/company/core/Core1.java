@@ -23,7 +23,7 @@ public class Core1 extends Core{
         this.dataCache = new DataCache();
     }
 
-    private void checkStatus(){
+    public void checkStatus(){
         if (this.mainContext.getContext().isDone()){                                                //si ya termino
             this.processor.getFinishedContexts().add(this.mainContext.getContext());                //lo guardo en la cola de contextos terminados
             if(!this.processor.getContextQueue().isEmpty()){                                        //si hay hilillos en la cola

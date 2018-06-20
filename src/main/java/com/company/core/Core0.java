@@ -27,7 +27,7 @@ public class Core0 extends Core {
         thread.start();
     }
 
-    private void checkStatus() {
+    public void checkStatus() {
 
         if (this.mainContext.isStalled()) {                             //si el hilo principal entra en fallo
             if (this.secondaryContext.getContext() == null) {                        //no hay otro hilo en fallo

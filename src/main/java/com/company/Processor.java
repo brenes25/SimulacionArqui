@@ -46,12 +46,15 @@ public class Processor {
         this.quantum = 0;
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
-        this.cyclicBarrier = new CyclicBarrier(3);
+        this.cyclicBarrier = new CyclicBarrier(4);
         this.dataParser = new DataParser(this);
         this.start();
+        this.mainThread = new MainThread(this);
+        Thread controllerTest = new Thread(mainThread);
+        controllerTest.start();
         this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
-        Thread controllerTest = new Thread(mainThread);
+
 
         this.instructionBus = new Semaphore(1, true);
         this.dataBus = new Semaphore(1, true);
@@ -141,5 +144,9 @@ public class Processor {
 
     public Semaphore getDataBus() {
         return dataBus;
+    }
+
+    public void setClock(int clock) {
+        this.clock = clock;
     }
 }

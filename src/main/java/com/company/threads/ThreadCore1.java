@@ -55,13 +55,29 @@ public class ThreadCore1 implements Runnable {
             }
             int instructionCacheWord = this.context.getPc() % 16;
             Instruction instruction = this.core1.getCacheInstruction(instructionBlock,instructionCacheWord);
-
+            this.context.setPc(this.context.getPc()+4);
             int opCode = this.core1.decodeInstruction(instruction,this.context); //decodificar y resolver instruction
             if(opCode == 35){               //LW
-
+                solveLW(instruction);
             }
             else if(opCode == 45){          //SW
-
+                solveSW(instruction);
+            }
+            //fin de ciclo, espera al resto de hilos a llegar a este punto
+            try {
+                this.core1.getProcessor().cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+            //esperando a finalizar los cambios del tiempo 0
+            try {
+                this.core1.getProcessor().cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
             }
 
 
@@ -69,7 +85,9 @@ public class ThreadCore1 implements Runnable {
 
     }
 
-    private void solveSW(Instruction instruction){}
+    private void solveSW(Instruction instruction){
+
+    }
 
     private void solveLW(Instruction instruction){
 

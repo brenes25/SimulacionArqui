@@ -72,4 +72,6 @@ public abstract class Core {
 
     }
 
+    public abstract void checkStatus();
+
 }
