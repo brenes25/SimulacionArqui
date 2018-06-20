@@ -2,6 +2,8 @@ package com.company.core;
 
 import com.company.Context;
 import com.company.Processor;
+import com.company.cache.DataCache;
+import com.company.cache.InstructionCache;
 import com.company.threads.ThreadCore0;
 import javafx.util.Pair;
 
@@ -11,7 +13,6 @@ import java.util.concurrent.*;
 public class Core0 extends Core {
     private ThreadCore0 mainContext;
     private ThreadCore0 secondaryContext;
-    private Processor processor;
 
     public CyclicBarrier cyclicBarrier;
 
@@ -19,9 +20,9 @@ public class Core0 extends Core {
 
 
     public Core0(Context context, Processor processor) {
+        super(processor);
         this.reservedPosition = new Pair<String, Integer>("", -1);
         this.mainContext = new ThreadCore0(context);
-        this.processor = processor;
         this.cyclicBarrier = processor.cyclicBarrier;
         Thread thread = new Thread(mainContext, "thread1");
         thread.start();
@@ -70,4 +71,5 @@ public class Core0 extends Core {
             //falta restar el quantum
         }
     }
+
 }

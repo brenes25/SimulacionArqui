@@ -10,11 +10,10 @@ import java.util.concurrent.*;
 public class Core1 extends Core{
 
     private ThreadCore1 mainContext;
-    private Processor processor;
     public CyclicBarrier cyclicBarrier;
 
     public Core1(Context context, Processor processor){
-        this.processor = processor;
+        super(processor);
         this.cyclicBarrier = processor.cyclicBarrier;
         this.mainContext = new ThreadCore1(context, this);
         Thread thread = new Thread(this.mainContext, "threadC1");
@@ -41,4 +40,7 @@ public class Core1 extends Core{
     public void setProcessor(Processor processor) {
         this.processor = processor;
     }
+
+
+
 }

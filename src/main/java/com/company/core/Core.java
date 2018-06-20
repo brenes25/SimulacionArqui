@@ -2,12 +2,21 @@ package com.company.core;
 
 import com.company.Context;
 import com.company.Instruction;
+import com.company.Processor;
 import com.company.blocks.InstructionBlock;
 import com.company.cache.DataCache;
+import com.company.cache.DataCacheBlock;
 import com.company.cache.InstructionCache;
+
+import java.util.concurrent.BrokenBarrierException;
 
 public abstract class Core {
 
+    Processor processor;
+
+    public Core(Processor processor){
+        this.processor = new Processor();
+    }
 
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
@@ -62,6 +71,75 @@ public abstract class Core {
 
     }
 
+    public void askForInstructionBus(){
+        while (!this.processor.getInstructionBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void askForDataBus(){
+        while (!this.processor.getDataBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean getBlockLock(DataCacheBlock dataCacheBlock){
+        return dataCacheBlock.getCacheLock().tryAcquire();
+    }
+
+    public void goToMemory(){
+        for (int i = 0; i < 40; i++) {
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void changeCycle(){
+        try {
+            this.processor.cyclicBarrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+    }
+
     public abstract void checkStatus();
 
+    public DataCache getCacheCore1(){
+        return this.processor.getDataCacheCore1();
+    }
+
+    public InstructionCache getInstructionCacheCore1(){
+        return this.processor.getInstructionCacheCore1();
+    }
+
+    public DataCache getCacheCore0(){
+        return this.processor.getDataCacheCore0();
+    }
+
+    public InstructionCache getInstructionCacheCore0(){
+        return this.processor.getInstructionCacheCore0();
+    }
+
+    public Processor getProcessor() {
+        return processor;
+    }
 }

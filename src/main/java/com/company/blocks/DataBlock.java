@@ -12,4 +12,12 @@ public class DataBlock {
     public int getWord(int word){
         return (Integer) this.words.get(word);
     }
+
+    public List getWords() {
+        return words;
+    }
+
+    public void setWords(List words) {
+        this.words = words;
+    }
 }

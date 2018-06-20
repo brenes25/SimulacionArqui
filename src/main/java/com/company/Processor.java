@@ -51,6 +51,7 @@ public class Processor {
         this.bothCoresFinished = false;
         this.clock = 0;
         this.quantum = 0;
+
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
         this.cyclicBarrier = new CyclicBarrier(4);
@@ -63,9 +64,9 @@ public class Processor {
         this.mainThread = new MainThread(this);
         Thread controllerTest = new Thread(mainThread);
         controllerTest.start();
+
         this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
-
 
         this.instructionBus = new Semaphore(1, true);
         this.dataBus = new Semaphore(1, true);
