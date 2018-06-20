@@ -113,6 +113,10 @@ public class ThreadCore1 implements Runnable {
 
         } else {
             //el bloque no estaba
+            if (dataCacheBlockCore1.getState().equals(State.M)){
+                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+            }
             this.core1.goToMemory();
             DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
             dataCacheBlockCore1.setDataBlock(dataBlock);
