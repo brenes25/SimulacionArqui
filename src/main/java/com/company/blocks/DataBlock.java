@@ -1,9 +1,16 @@
 package com.company.blocks;
 
-import java.util.List;
+import java.util.*;
 
 public class DataBlock {
    private List words;
+
+   public DataBlock(){
+       this.words = new ArrayList<Integer>();
+       for (int i = 0; i < 4; i++) {
+           this.words.add(1);
+       }
+   }
 
     public DataBlock(List<Integer> words) {
         this.words = words;
@@ -18,7 +25,7 @@ public class DataBlock {
     }
 
     public void setWord(int word, int value){
-        this.words.add(word,value);
+        this.words.set(word,value);
     }
 
     public void setWords(List words) {

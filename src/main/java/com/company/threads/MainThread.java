@@ -14,28 +14,29 @@ public class MainThread implements Runnable{
 
     @Override
     public void run() {
-        try {
-            this.processor.cyclicBarrier.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BrokenBarrierException e) {
-            e.printStackTrace();
+        while(!this.processor.isFinishAll()) {
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+            //aumentar ciclos de reloj
+            processor.setClock(processor.getClock() + 1);
+            //llama a los check status
+            //processor.getCore0().checkStatus();
+            processor.getCore1().checkStatus();
+
+            //poner dos barreras
+
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
-        //aumentar ciclos de reloj
-        processor.setClock(processor.getClock()+1);
-        //llama a los check status
-        processor.getCore0().checkStatus();
-        processor.getCore1().checkStatus();
-
-        //poner dos barreras
-
-        try {
-            this.processor.cyclicBarrier.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BrokenBarrierException e) {
-            e.printStackTrace();
-        }
-
     }
 }

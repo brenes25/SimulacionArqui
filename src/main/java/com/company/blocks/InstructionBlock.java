@@ -9,8 +9,12 @@ public class InstructionBlock {
 
     private List instructions;
 
-    public InstructionBlock() {
+    public  InstructionBlock(){
         this.instructions = new ArrayList<Instruction>();
+    }
+
+    public InstructionBlock(List<Instruction> instructions) {
+        this.instructions = instructions;
     }
 
     public void addInstruction(Instruction instruction, int word){

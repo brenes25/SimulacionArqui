@@ -20,7 +20,7 @@ public class ThreadCore1 implements Runnable {
     }
 
     public void run() {
-        while (true) {
+        while (!this.core1.getProcessor().isFinishAll()) {
             int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
             int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
             //va y trae ese bloque de la cache
@@ -34,10 +34,9 @@ public class ThreadCore1 implements Runnable {
                 this.core1.askForInstructionBus();
                 //resolver fallo.
                 this.context.setStalled(true);
+                this.core1.goToMemory();
                 instructionCacheBlock.setInstructionBlock(instructionBlock);
                 instructionCacheBlock.setLabel(instructionMemoryBlockPos);
-
-                this.core1.goToMemory();
 
                 this.context.setStalled(false);
                 this.core1.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
@@ -48,9 +47,10 @@ public class ThreadCore1 implements Runnable {
             int opCode = this.core1.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
             if (opCode == 35) {               //LW
                 solveLW(instruction);
-            } else if (opCode == 45) {          //SW
+            } else if (opCode == 43) {          //SW
                 solveSW(instruction);
             }
+            this.context.setCurrentQuantum(this.context.getCurrentQuantum()-1);
             //fin de ciclo, espera al resto de hilos a llegar a este punto
             this.core1.changeCycle();
             //esperando a finalizar los cambios del tiempo 0
@@ -108,6 +108,10 @@ public class ThreadCore1 implements Runnable {
                 // Ejecucion del store
                 dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
 
+                //Libera los candados
+                dataCacheBlockCore0.getCacheLock().release();
+                this.core1.getProcessor().getDataBus().release();
+
             }
         }
         else{
@@ -115,8 +119,7 @@ public class ThreadCore1 implements Runnable {
             if (dataCacheBlockCore1.getState().equals(State.M)) {
                 this.core1.goToMemory();
                 // escribo el bloque modificado de la otra cache en memoria
-                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
-                dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+                this.core1.getProcessor().saveInMemory(dataCacheBlockCore1.getLabel(),dataCacheBlockCore1.getDataBlock());
             }
 
             this.tryToLockBlock(dataCacheBlockCore0);
@@ -132,6 +135,10 @@ public class ThreadCore1 implements Runnable {
             dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
             dataCacheBlockCore1.setLabel(numBlock);
             dataCacheBlockCore1.setState(State.M);
+
+            //Libera los candados
+            dataCacheBlockCore0.getCacheLock().release();
+            this.core1.getProcessor().getDataBus().release();
         }
     }
 
@@ -188,10 +195,9 @@ public class ThreadCore1 implements Runnable {
             if (dataCacheBlockCore1.getState().equals(State.M)) {
                 this.core1.goToMemory();
                 // escribo el bloque modificado de la otra cache en memoria
-                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
-                dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+                this.core1.getProcessor().saveInMemory(dataCacheBlockCore1.getLabel(),dataCacheBlockCore1.getDataBlock());
             }
-
+            this.tryToLockBlock(dataCacheBlockCore0);
             this.core1.goToMemory();
 
             this.checkOtherCacheStatus(dataCacheBlockCore0,dataCacheBlockCore1,numBlock);
@@ -207,6 +213,10 @@ public class ThreadCore1 implements Runnable {
 
             //Ejecucion del load
             this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
+
+            //Libera los candados
+            dataCacheBlockCore0.getCacheLock().release();
+            this.core1.getProcessor().getDataBus().release();
         }
     }
 

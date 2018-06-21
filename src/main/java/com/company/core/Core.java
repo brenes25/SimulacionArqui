@@ -15,7 +15,7 @@ public abstract class Core {
     Processor processor;
 
     public Core(Processor processor){
-        this.processor = new Processor();
+        this.processor = processor;
     }
 
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
@@ -27,28 +27,28 @@ public abstract class Core {
         int opCode = (Integer)instruction.getInstruction().get(0) ;
         switch(opCode){
             case 8:                 //DADDI
-                context.setRegisterValue(instruction.getInstructionValue(2),  instruction.getInstructionValue(1)+ instruction.getInstructionValue(3));                      //se le setea al registro
+                context.setRegisterValue(instruction.getInstructionValue(2),  context.getRegisterValue(instruction.getInstructionValue(1)) + instruction.getInstructionValue(3));                      //se le setea al registro
                 break;                                                                                              //se devuelve el valor.
             case 32:                //DADD
-                context.setRegisterValue(instruction.getInstructionValue(3),  instruction.getInstructionValue(1)+ instruction.getInstructionValue(2));                     //se le setea al registro
+                context.setRegisterValue(instruction.getInstructionValue(3),  context.getRegisterValue(instruction.getInstructionValue(1)) + context.getRegisterValue(instruction.getInstructionValue(2)) );                     //se le setea al registro
                 break;
             case 34:                //DSUB
-                context.setRegisterValue(instruction.getInstructionValue(3),  instruction.getInstructionValue(1) - instruction.getInstructionValue(2));                    //se le setea al registro
+                context.setRegisterValue(instruction.getInstructionValue(3),  context.getRegisterValue(instruction.getInstructionValue(1)) - context.getRegisterValue(instruction.getInstructionValue(2)) );                    //se le setea al registro
                 break;
             case 12:                //DMUL
-                context.setRegisterValue(instruction.getInstructionValue(3),  instruction.getInstructionValue(1) * instruction.getInstructionValue(2));
+                context.setRegisterValue(instruction.getInstructionValue(3),   context.getRegisterValue(instruction.getInstructionValue(1))  * context.getRegisterValue(instruction.getInstructionValue(2)));
                 break;
             case 14:                //DDIV
-                context.setRegisterValue(instruction.getInstructionValue(3),  instruction.getInstructionValue(1) / instruction.getInstructionValue(2));
+                context.setRegisterValue(instruction.getInstructionValue(3),   context.getRegisterValue(instruction.getInstructionValue(1))  / context.getRegisterValue(instruction.getInstructionValue(2)));
                 break;
             case 4: {                 //BEQZ
-                if (instruction.getInstructionValue(0) == 0) {
+                if (context.getRegisterValue(instruction.getInstructionValue(1)) == 0) {
                     context.setPc(context.getPc() + 4 * instruction.getInstructionValue(3));
                 }
                 break;
             }
             case 5: {                //BNEZ
-                if(instruction.getInstructionValue(0) != 0){
+                if(context.getRegisterValue(instruction.getInstructionValue(1))  != 0){
                     context.setPc(context.getPc() + 4 * instruction.getInstructionValue(3));
                 }
                 break;
@@ -59,10 +59,12 @@ public abstract class Core {
                 break;
             }
             case 2:                 //JR
-                context.setPc(instruction.getInstructionValue(1));
+                context.setPc(context.getRegisterValue(instruction.getInstructionValue(1)));
                 break;
             case 63:
                 context.setDone(true);      //FIN
+                context.printRegisters();
+                processor.printMainMemory();
                 break;
             default:
                 break;
@@ -101,6 +103,13 @@ public abstract class Core {
 
     public void goToMemory(){
         for (int i = 0; i < 40; i++) {
+            try {
+                this.processor.cyclicBarrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
             try {
                 this.processor.cyclicBarrier.await();
             } catch (InterruptedException e) {

@@ -24,7 +24,10 @@ public class Core1 extends Core{
         if (this.mainContext.getContext().isDone()){                                                //si ya termino
             this.processor.getFinishedContexts().add(this.mainContext.getContext());                //lo guardo en la cola de contextos terminados
             if(!this.processor.getContextQueue().isEmpty()){                                        //si hay hilillos en la cola
-                this.mainContext.setContext((Context) this.processor.getContextQueue().poll());     //saco uno
+                this.mainContext.setContext(this.processor.getNextContext());     //saco uno
+            }
+            else{
+                this.getProcessor().setFinishAll(true);
             }
         }
         else if(this.mainContext.getContext().getCurrentQuantum() == 0){                            //si se le acabo el quantum y no ha terminado
@@ -40,7 +43,5 @@ public class Core1 extends Core{
     public void setProcessor(Processor processor) {
         this.processor = processor;
     }
-
-
 
 }

@@ -19,6 +19,7 @@ public class Context {
         this.currentQuantum = currentQuantum;
         this.isDone = false;
         this.isStalled = false;
+        this.fillRegisters();
     }
 
     public void fillRegisters(){
@@ -32,7 +33,16 @@ public class Context {
     }
 
     public void setRegisterValue(int register, int value){
-        this.registers.add(register, value);
+        this.registers.set(register, value);
+    }
+
+    public void printRegisters(){
+        System.out.println("-------- REGISTERS -------------");
+        for (int i = 0; i < registers.size(); i++) {
+            System.out.print(registers.get(i));
+            System.out.print(" - ");
+        }
+        System.out.println();
     }
 
     public int getPc() {

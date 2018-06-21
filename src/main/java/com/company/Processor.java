@@ -8,6 +8,7 @@ import com.company.core.Core0;
 import com.company.core.Core1;
 import com.company.threads.MainThread;
 
+import javax.xml.crypto.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -42,34 +43,37 @@ public class Processor {
 
     private Object lock1;
 
+    private boolean finishAll;
+
     private MainThread mainThread;
 
     public Processor() {
+        lock1 = new Object();
         this.mainMemory = new ArrayList<DataBlock>();
+        this.fillMainMemory();
         this.instructionMemory = new ArrayList<InstructionBlock>();
         this.start = true;
         this.bothCoresFinished = false;
+        this.finishAll = false;
         this.clock = 0;
         this.quantum = 0;
-
+        this.instructionBus = new Semaphore(1, true);
+        this.dataBus = new Semaphore(1, true);
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
-        this.cyclicBarrier = new CyclicBarrier(4);
+        this.cyclicBarrier = new CyclicBarrier(2);
         this.dataParser = new DataParser(this);
         this.dataCacheCore0 = new DataCache();
         this.dataCacheCore1 = new DataCache();
         this.instructionCacheCore0 = new InstructionCache();
         this.instructionCacheCore1 = new InstructionCache();
-        this.start();
+        this.userStart();
         this.mainThread = new MainThread(this);
         Thread controllerTest = new Thread(mainThread);
         controllerTest.start();
 
-        this.core0 = new Core0((Context) this.contextQueue.poll(), this);
+        //this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
-
-        this.instructionBus = new Semaphore(1, true);
-        this.dataBus = new Semaphore(1, true);
     }
 
 
@@ -89,7 +93,25 @@ public class Processor {
         }
     }
 
-    public void start(){
+    public void printMainMemory (){
+        System.out.println("----------- SOY LA MEMORIA!!!! -----------");
+        System.out.println(mainMemory.size());
+        for (int i = 0; i < mainMemory.size(); i++) {
+            DataBlock dataBlock = (DataBlock) mainMemory.get(i);
+            List data = dataBlock.getWords();
+            for (int j = 0; j < data.size(); j++) {
+                System.out.print(data.get(j));
+                System.out.print(" - ");
+            }
+            System.out.println();
+        }
+    }
+
+    public void saveInMemory(int index,DataBlock dataBlock){
+        this.mainMemory.set(index,dataBlock);
+    }
+
+    public void userStart(){
         Scanner input = new Scanner (System.in);
         while(start){
             System.out.println("Cual hilillo quiere agregar en el sistema");
@@ -101,7 +123,12 @@ public class Processor {
         }
         System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
         this.quantum = Integer.parseInt(input.nextLine());
+    }
 
+    private void fillMainMemory(){
+        for (int i = 0; i < 24; i++) {
+            this.mainMemory.add(new DataBlock());
+        }
     }
 
     public void addNewInstruction(InstructionBlock instructionBlock){
@@ -176,5 +203,13 @@ public class Processor {
 
     public InstructionCache getInstructionCacheCore1() {
         return instructionCacheCore1;
+    }
+
+    public boolean isFinishAll() {
+        return finishAll;
+    }
+
+    public void setFinishAll(boolean finishAll) {
+        this.finishAll = finishAll;
     }
 }
