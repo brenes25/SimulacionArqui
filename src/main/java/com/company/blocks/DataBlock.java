@@ -17,6 +17,10 @@ public class DataBlock {
         return words;
     }
 
+    public void setWord(int word, int value){
+        this.words.add(word,value);
+    }
+
     public void setWords(List words) {
         this.words = words;
     }

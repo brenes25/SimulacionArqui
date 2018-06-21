@@ -60,7 +60,79 @@ public class ThreadCore1 implements Runnable {
     }
 
     private void solveSW(Instruction instruction) {
+        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        int cachePos = memoryPos % 4;
+        int numBlock = memoryPos / 16;
+        int word = (memoryPos % 16) / 4;
+        DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
+        DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos); //obtener bloque de la otra cache
 
+        if (dataCacheBlockCore1.getLabel() == numBlock) {
+            // El bloque está en la caché
+            if (dataCacheBlockCore1.getState().equals(State.M)) {   //Si el estado es modificado
+                //Ejecucion del store
+                dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
+
+            } else if (dataCacheBlockCore1.getState().equals(State.C)) {  //Si el estado es compartido
+                dataCacheBlockCore1.setState(State.M);
+                this.tryToLockBlock(dataCacheBlockCore0); //intento bloquear el bus y luego el bloque de la otra cache
+                //Voy a la otra cache a invalidar el bloque.
+                if(dataCacheBlockCore0.getLabel() == numBlock){
+                    dataCacheBlockCore0.setState(State.I);
+                }
+                // Ejecucion del store
+                dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
+
+            } else {   //Si el estado es invalido
+                dataCacheBlockCore1.setState(State.M);
+                this.tryToLockBlock(dataCacheBlockCore0); //intento bloquear el bus y luego el bloque de la otra cache
+
+                //revisar etiqueta de la otra cache
+                if (dataCacheBlockCore0.getLabel() == numBlock){
+                    // El estado siempre va a estar modificado
+                    // escribo el bloque modificado de la otra cache en memoria
+                    DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                    dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+
+                    //se invalida el bloque de la otra cache
+                    dataCacheBlockCore0.setState(State.I);
+                }
+
+                //guardar bloque de memoria en la cache del nucleo 1
+                this.core1.goToMemory();
+                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+
+                //guardar bloque a cache
+                dataCacheBlockCore1.setDataBlock(dataBlock);
+
+                // Ejecucion del store
+                dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
+
+            }
+        }
+        else{
+            // el bloque no está en cache
+            if (dataCacheBlockCore1.getState().equals(State.M)) {
+                this.core1.goToMemory();
+                // escribo el bloque modificado de la otra cache en memoria
+                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+            }
+
+            this.tryToLockBlock(dataCacheBlockCore0);
+            this.core1.goToMemory();
+
+            this.checkOtherCacheStatus(dataCacheBlockCore0,dataCacheBlockCore1,numBlock);
+            DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+
+            //guardar bloque a cache
+            dataCacheBlockCore1.setDataBlock(dataBlock);
+
+            // Ejecucion del store
+            dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
+            dataCacheBlockCore1.setLabel(numBlock);
+            dataCacheBlockCore1.setState(State.M);
+        }
     }
 
 
@@ -68,28 +140,20 @@ public class ThreadCore1 implements Runnable {
         int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int cachePos = memoryPos % 4;
         int numBlock = memoryPos / 16;
+        int word = (memoryPos % 16) / 4;
         DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
+        DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos);
 
         if (dataCacheBlockCore1.getLabel() == numBlock) {
             // El bloque está en la caché
             if (!dataCacheBlockCore1.getState().equals(State.I)) {
                 //Estado es modificado o compartido
-                int word = (memoryPos % 16) / 4;
                 this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
             } else {
                 //Estado es inválido, miss
                 this.core1.goToMemory();
 
-                DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos);
-                boolean blockLocked = false;
-                do {
-                    this.core1.askForDataBus();
-                    blockLocked = this.core1.getBlockLock(dataCacheBlockCore0);  //pide candado sobre bloque de la otra cache.
-                    if (!blockLocked) {
-                        this.core1.getProcessor().getDataBus().release();
-                        this.core1.changeCycle();
-                    }
-                } while (!blockLocked);
+                this.tryToLockBlock(dataCacheBlockCore0);
 
                 if (dataCacheBlockCore0.getLabel() == numBlock && dataCacheBlockCore0.getState().equals(State.M)) {
                     // La otra cache tiene el bloque también
@@ -98,14 +162,22 @@ public class ThreadCore1 implements Runnable {
                     dataBlock.setWords(dataCacheBlockCore0.getDataBlock().getWords()); //guarda el bloque actualizado en memoria
                     dataCacheBlockCore0.setState(State.C);
 
+                    //guardar bloque a cache
                     dataCacheBlockCore1.setDataBlock(dataBlock);
                     dataCacheBlockCore1.setState(State.C);
+                    //Ejecucion del load
+                    this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
 
                 } else {
                     // La otra caché no tiene el bloque o lo tiene I/C
                     DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+
+                    //guardar bloque a cache
                     dataCacheBlockCore1.setDataBlock(dataBlock);
                     dataCacheBlockCore1.setState(State.C);
+
+                    //Ejecucion del laod
+                    this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
                 }
                 dataCacheBlockCore0.getCacheLock().release();
                 this.core1.getProcessor().getDataBus().release();
@@ -113,17 +185,54 @@ public class ThreadCore1 implements Runnable {
 
         } else {
             //el bloque no estaba
-            if (dataCacheBlockCore1.getState().equals(State.M)){
+            if (dataCacheBlockCore1.getState().equals(State.M)) {
+                this.core1.goToMemory();
+                // escribo el bloque modificado de la otra cache en memoria
                 DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
                 dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
             }
+
             this.core1.goToMemory();
+
+            this.checkOtherCacheStatus(dataCacheBlockCore0,dataCacheBlockCore1,numBlock);
             DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+
+            //guardar bloque a cache
             dataCacheBlockCore1.setDataBlock(dataBlock);
+
+            //guardar bloque a cache
+            dataCacheBlockCore1.setDataBlock(dataBlock);
+            dataCacheBlockCore1.setLabel(numBlock);
             dataCacheBlockCore1.setState(State.C);
+
+            //Ejecucion del load
+            this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
         }
     }
 
+    public void tryToLockBlock(DataCacheBlock dataCacheBlock){
+        boolean blockLocked;
+        do {
+            this.core1.askForDataBus();
+            blockLocked = this.core1.getBlockLock(dataCacheBlock);  //pide candado sobre bloque de la otra cache.
+            if (!blockLocked) {
+                this.core1.getProcessor().getDataBus().release();
+                this.core1.changeCycle();
+            }
+        } while (!blockLocked);
+    }
+
+    public void checkOtherCacheStatus(DataCacheBlock dataCacheBlockCore0, DataCacheBlock dataCacheBlockCore1, int numBlock){
+        if (dataCacheBlockCore0.getLabel() == numBlock){
+            // el bloque estaba en la otra cache
+            if (dataCacheBlockCore0.getState().equals(State.M)){
+                // escribo el bloque modificado de la otra cache en memoria
+                DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
+            }
+            dataCacheBlockCore0.setState(State.I);
+        }
+    }
 
     public Context getContext() {
         return context;
