@@ -7,8 +7,6 @@ import com.company.blocks.State;
 import com.company.cache.*;
 import com.company.core.*;
 
-import java.util.concurrent.BrokenBarrierException;
-
 public class ThreadCore1 implements Runnable {
 
     private Context context;
@@ -61,8 +59,8 @@ public class ThreadCore1 implements Runnable {
 
     private void solveSW(Instruction instruction) {
         int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
-        int cachePos = memoryPos % 4;
         int numBlock = memoryPos / 16;
+        int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
         DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
         DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos); //obtener bloque de la otra cache
@@ -145,8 +143,8 @@ public class ThreadCore1 implements Runnable {
 
     private void solveLW(Instruction instruction) {
         int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
-        int cachePos = memoryPos % 4;
         int numBlock = memoryPos / 16;
+        int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
         DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
         DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos);
