@@ -124,6 +124,7 @@ public class ThreadCore1 implements Runnable {
             this.core1.goToMemory();
 
             this.checkOtherCacheStatus(dataCacheBlockCore0,dataCacheBlockCore1,numBlock);
+            dataCacheBlockCore0.setState(State.I);
             DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
 
             //guardar bloque a cache
@@ -238,7 +239,6 @@ public class ThreadCore1 implements Runnable {
                 DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
                 dataBlock.setWords(dataCacheBlockCore1.getDataBlock().getWords());
             }
-            dataCacheBlockCore0.setState(State.I);
         }
     }
 
