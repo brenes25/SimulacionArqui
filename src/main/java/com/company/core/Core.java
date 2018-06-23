@@ -65,6 +65,8 @@ public abstract class Core {
                 context.setDone(true);      //FIN
                 context.printRegisters();
                 processor.printMainMemory();
+                System.out.println(this.processor.getDataCacheCore1().toString());
+                System.out.println(this.processor.getDataCacheCore0().toString());
                 break;
             default:
                 break;

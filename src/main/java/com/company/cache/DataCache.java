@@ -29,4 +29,21 @@ public class DataCache {
     public DataCacheBlock getBlockFromCache(int blockPosition){
         return (DataCacheBlock) this.cache.get(blockPosition);
     }
+
+
+    @Override
+    public String toString(){
+        String cache = "-------------  SOY LA CACHE --------------------- \n";
+        for (int i = 0; i < this.cache.size(); i++) {
+            DataCacheBlock dataCacheBlock = (DataCacheBlock) this.cache.get(i);
+            DataBlock dataBlock= dataCacheBlock.getDataBlock();
+            for (int j = 0; j < dataBlock.getWords().size(); j++) {
+                cache += "  "+ dataBlock.getWord(j);
+            }
+            cache += " ("+ dataCacheBlock.getState()+") ";
+            cache += "("+ dataCacheBlock.getLabel()+") ";
+            cache += "|| ";
+        }
+        return cache;
+    }
 }

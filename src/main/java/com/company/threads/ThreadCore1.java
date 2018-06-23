@@ -7,6 +7,10 @@ import com.company.blocks.State;
 import com.company.cache.*;
 import com.company.core.*;
 
+import javax.xml.crypto.Data;
+import java.util.Collections;
+import java.util.List;
+
 public class ThreadCore1 implements Runnable {
 
     private Context context;
@@ -127,8 +131,11 @@ public class ThreadCore1 implements Runnable {
             dataCacheBlockCore0.setState(State.I);
             DataBlock dataBlock = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
 
+            DataBlock dataBlock1 = new DataBlock();
+
+            Collections.copy(dataBlock.getWords(), dataBlock1.getWords());
             //guardar bloque a cache
-            dataCacheBlockCore1.setDataBlock(dataBlock);
+            dataCacheBlockCore1.setDataBlock(dataBlock1);
 
             // Ejecucion del store
             dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
