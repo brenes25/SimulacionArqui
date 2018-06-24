@@ -8,7 +8,6 @@ import com.company.core.Core0;
 import com.company.core.Core1;
 import com.company.threads.MainThread;
 
-import javax.xml.crypto.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -47,6 +46,8 @@ public class Processor {
 
     private MainThread mainThread;
 
+    public int contextQueueInitialSize;
+
     public Processor() {
         lock1 = new Object();
         this.mainMemory = new ArrayList<DataBlock>();
@@ -68,11 +69,12 @@ public class Processor {
         this.instructionCacheCore0 = new InstructionCache();
         this.instructionCacheCore1 = new InstructionCache();
         this.userStart();
+        this.contextQueueInitialSize = this.contextQueue.size();
         this.mainThread = new MainThread(this);
         Thread controllerTest = new Thread(mainThread);
         controllerTest.start();
 
-        //this.core0 = new Core0((Context) this.contextQueue.poll(), this);
+        this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
     }
 
@@ -108,7 +110,9 @@ public class Processor {
     }
 
     public void saveInMemory(int index,DataBlock dataBlock){
-        this.mainMemory.set(index,dataBlock);
+        DataBlock dataBlock1 = new DataBlock();
+        Collections.copy(dataBlock1.getWords(), dataBlock.getWords());
+        this.mainMemory.set(index,dataBlock1);
     }
 
     public void userStart(){
@@ -211,5 +215,9 @@ public class Processor {
 
     public void setFinishAll(boolean finishAll) {
         this.finishAll = finishAll;
+    }
+
+    public int getContextInitialQueueSize() {
+        return contextQueueInitialSize;
     }
 }

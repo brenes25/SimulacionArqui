@@ -32,5 +32,7 @@ public class InstructionCacheBlock {
         this.label = label;
     }
 
-
+    public InstructionBlock getInstructionBlock() {
+        return instructionBlock;
+    }
 }

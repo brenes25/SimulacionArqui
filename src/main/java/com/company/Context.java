@@ -11,7 +11,10 @@ public class Context {
     private int currentQuantum;
 
     private boolean isStalled;
+    private boolean finishedStalled;
     private boolean isDone;
+    private boolean isStopped;
+    private boolean isPrincipal;
 
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
@@ -75,6 +78,30 @@ public class Context {
 
     public void setDone(boolean done) {
         isDone = done;
+    }
+
+    public boolean isStopped() {
+        return isStopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        isStopped = stopped;
+    }
+
+    public boolean isFinishedStalled() {
+        return finishedStalled;
+    }
+
+    public void setFinishedStalled(boolean finishedStalled) {
+        this.finishedStalled = finishedStalled;
+    }
+
+    public boolean isPrincipal() {
+        return isPrincipal;
+    }
+
+    public void setPrincipal(boolean principal) {
+        isPrincipal = principal;
     }
 }
 

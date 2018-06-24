@@ -14,7 +14,7 @@ public class MainThread implements Runnable{
 
     @Override
     public void run() {
-        while(!this.processor.isFinishAll()) {
+        while(this.processor.getContextInitialQueueSize() != this.processor.getFinishedContexts().size()) {
             try {
                 this.processor.cyclicBarrier.await();
             } catch (InterruptedException e) {
@@ -25,7 +25,7 @@ public class MainThread implements Runnable{
             //aumentar ciclos de reloj
             processor.setClock(processor.getClock() + 1);
             //llama a los check status
-            //processor.getCore0().checkStatus();
+            processor.getCore0().checkStatus();
             processor.getCore1().checkStatus();
 
             //poner dos barreras
