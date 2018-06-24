@@ -38,5 +38,6 @@ public class MainThread implements Runnable{
                 e.printStackTrace();
             }
         }
+        System.out.println("SALI");
     }
 }

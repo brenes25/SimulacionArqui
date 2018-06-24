@@ -13,14 +13,14 @@ public class Core0 extends Core {
 
     public CyclicBarrier cyclicBarrier;
 
-
+    public boolean bothThreadsFinished;
 
     public Core0(Context context, Processor processor) {
         super(processor);
         context.setPrincipal(true);
-
-        this.mainContext = new ThreadCore0(context, processor.getCore0());
-        this.secondaryContext = new ThreadCore0(null, processor.getCore0());
+        this.bothThreadsFinished = false;
+        this.mainContext = new ThreadCore0(context, this);
+        this.secondaryContext = new ThreadCore0(null, this);
         this.cyclicBarrier = processor.cyclicBarrier;
         Thread thread = new Thread(mainContext, "thread1");
         thread.start();
@@ -29,28 +29,39 @@ public class Core0 extends Core {
     }
 
     public void checkStatus() {
+
+        if(this.secondaryContext.getContext() != null) {
+            //si el hilo principal entra en fallo
+            if (this.mainContext.getContext().isStalled()) {
+                //no hay otro hilo en fallo
+                if (this.secondaryContext.getContext() == null) {
+                    //hago el cambio de contexto.
+                    this.mainContext.getContext().setFinishedStalled(false);
+                    this.secondaryContext = this.mainContext;
+                    //y traigo otro hilo de la cola de contexto
+                    this.mainContext.setContext((Context) this.processor.getContextQueue().poll());
+                    //pongo el nuevo a correr.
+
+                }
+                //le doy el procesador al hilillo secundario
+                else if (!this.secondaryContext.getContext().isStalled()) {
+                    Context auxContext = this.secondaryContext.getContext();
+                    this.secondaryContext.setContext(this.mainContext.getContext());
+                    this.mainContext.setContext(auxContext);
+                }
+            }
+            //caso en el que por ser el mas viejo tengo derecho de tener el procesador
+            else {
+                if (this.secondaryContext.getContext().isPrincipal() && !this.mainContext.getContext().isStalled()) {
+                    Context auxContext = this.secondaryContext.getContext();
+                    this.secondaryContext.setContext(this.mainContext.getContext());
+                    this.mainContext.setContext(auxContext);
+                }
+            }
+        }
         if (this.mainContext.getContext().isDone()) {                          //si ya termino
             this.processor.getFinishedContexts().add(this.mainContext.getContext());  //lo guardo en la cola de contextos terminados
             this.changeSecondaryToPrincipal();
-        }
-        //si el hilo principal entra en fallo
-        else if (this.mainContext.getContext().isStalled()) {
-            //no hay otro hilo en fallo
-            if (this.secondaryContext.getContext() == null) {
-                //hago el cambio de contexto.
-                this.mainContext.getContext().setFinishedStalled(false);
-                this.secondaryContext = this.mainContext;
-                //y traigo otro hilo de la cola de contexto
-                this.mainContext.setContext((Context) this.processor.getContextQueue().poll());
-                //pongo el nuevo a correr.
-
-            }
-            //le doy el procesador al hilillo secundario
-            else if(!this.secondaryContext.getContext().isStalled()){
-                Context auxContext = this.secondaryContext.getContext();
-                this.secondaryContext.setContext(this.mainContext.getContext());
-                this.mainContext.setContext(auxContext);
-            }
         }
         // no tuve fallo
         else if(this.mainContext.getContext().getCurrentQuantum() == 0){
@@ -59,14 +70,7 @@ public class Core0 extends Core {
             this.changeSecondaryToPrincipal();
 
         }
-        //caso en el que por ser el mas viejo tengo derecho de tener el procesador
-        else {
-            if(this.secondaryContext.getContext().isPrincipal() && !this.mainContext.getContext().isStalled()){
-                Context auxContext = this.secondaryContext.getContext();
-                this.secondaryContext.setContext(this.mainContext.getContext());
-                this.mainContext.setContext(auxContext);
-            }
-        }
+
 
 
     }
@@ -94,5 +98,8 @@ public class Core0 extends Core {
         }
     }
 
-
+    @Override
+    public boolean isBothThreadsFinished() {
+        return bothThreadsFinished;
+    }
 }

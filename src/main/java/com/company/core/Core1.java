@@ -43,6 +43,7 @@ public class Core1 extends Core {
         return processor;
     }
 
+
     public void setProcessor(Processor processor) {
         this.processor = processor;
     }

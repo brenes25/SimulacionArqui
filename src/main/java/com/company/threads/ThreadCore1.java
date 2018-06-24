@@ -62,6 +62,7 @@ public class ThreadCore1 implements Runnable {
             this.core1.changeCycle();
             this.core1.changeCycle();
         }
+        System.out.println("SALI! COre1");
 
     }
 
@@ -200,7 +201,9 @@ public class ThreadCore1 implements Runnable {
 
                     //guarda bloque a cache
                     DataBlock dataBlock1 = new DataBlock();
-                    Collections.copy(dataBlock1.getWords(), (List) this.core1.getProcessor().getMainMemory().get(numBlock) );
+                    DataBlock dataBlock2 = new DataBlock();
+                    dataBlock2 = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                    Collections.copy(dataBlock1.getWords(),  dataBlock2.getWords());
                     dataCacheBlockCore1.setDataBlock(dataBlock1);
                     dataCacheBlockCore1.setState(State.C);
                     //Ejecucion del load

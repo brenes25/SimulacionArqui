@@ -62,7 +62,7 @@ public class Processor {
         this.dataBus = new Semaphore(1, true);
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
-        this.cyclicBarrier = new CyclicBarrier(2);
+        this.cyclicBarrier = new CyclicBarrier(4);
         this.dataParser = new DataParser(this);
         this.dataCacheCore0 = new DataCache();
         this.dataCacheCore1 = new DataCache();

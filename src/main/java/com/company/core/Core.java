@@ -30,8 +30,12 @@ public abstract class Core {
         this.bothThreadsFinished = false;
     }
 
+    //TODO: algo pasa aca, agregue un if de prueba para que sirviera por el momento
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
+        if(newWord >= instructionBlock.getInstructions().size()){
+            return (Instruction) instructionBlock.getInstructions().get(instructionBlock.getInstructions().size()-1);
+        }
         return (Instruction) instructionBlock.getInstructions().get(newWord);
     }
 
@@ -75,10 +79,10 @@ public abstract class Core {
                 break;
             case 63:
                 context.setDone(true);      //FIN
-                context.printRegisters();
-                processor.printMainMemory();
-                System.out.println(this.processor.getDataCacheCore1().toString());
-                System.out.println(this.processor.getDataCacheCore0().toString());
+//                context.printRegisters();
+//                processor.printMainMemory();
+//                System.out.println(this.processor.getDataCacheCore1().toString());
+//                System.out.println(this.processor.getDataCacheCore0().toString());
                 break;
             default:
                 break;
@@ -253,4 +257,5 @@ public abstract class Core {
     public boolean isBothThreadsFinished() {
         return bothThreadsFinished;
     }
+
 }

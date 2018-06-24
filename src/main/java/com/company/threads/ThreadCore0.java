@@ -81,6 +81,8 @@ public class ThreadCore0 implements Runnable {
             this.core0.changeCycle();
         }
 
+        System.out.println("SALI COre0");
+
     }
 
 
@@ -124,7 +126,9 @@ public class ThreadCore0 implements Runnable {
 
                     //guarda bloque a cache
                     DataBlock dataBlock1 = new DataBlock();
-                    Collections.copy(dataBlock1.getWords(), (List) this.core0.getProcessor().getMainMemory().get(numBlock) );
+                    DataBlock dataBlock2 = new DataBlock();
+                    dataBlock2 = (DataBlock) this.core0.getProcessor().getMainMemory().get(numBlock);
+                    Collections.copy(dataBlock1.getWords(), dataBlock2.getWords() );
                     dataCacheBlockCore0.setDataBlock(dataBlock1);
                     dataCacheBlockCore0.setState(State.C);
                     // si entre en fallo y no soy el principal
@@ -368,7 +372,7 @@ public class ThreadCore0 implements Runnable {
     }
 
     private boolean isInstructionCachePositionReserved(int position) {
-        if (position != this.core0.getInstructionCacheReservedPosition() && this.core0.getInstructionCacheReservedPosition() != -1) {
+        if (position != this.core0.getInstructionCacheReservedPosition()) {
             return false;
         }
         return true;
@@ -390,7 +394,7 @@ public class ThreadCore0 implements Runnable {
     }
 
     private void tryToReserveInstructionCachePosition(int cachePos){
-            while(this.core0.getInstructionCacheReservedPosition() != -1){
+        while(this.core0.getInstructionCacheReservedPosition() != -1){
             this.core0.changeCycle();
             this.core0.changeCycle();
         }
