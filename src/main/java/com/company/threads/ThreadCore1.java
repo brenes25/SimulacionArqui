@@ -8,7 +8,6 @@ import com.company.cache.*;
 import com.company.core.*;
 
 import java.util.Collections;
-import java.util.List;
 
 public class ThreadCore1 implements Runnable {
 
@@ -55,12 +54,12 @@ public class ThreadCore1 implements Runnable {
             this.context.setCurrentQuantum(this.context.getCurrentQuantum()-1);
             //fin de ciclo, espera al resto de hilos a llegar a este punto
             this.core1.changeCycle();
-            //esperando a finalizar los cambios del tiempo 0
-            this.core1.changeCycle();
         }
-        while(this.core1.getProcessor().getContextInitialQueueSize() == this.core1.getProcessor().getFinishedContexts().size()){
+        while(this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-1 ||
+                this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-2){
+            System.out.println("estoy esperando nucleo 1");
             this.core1.changeCycle();
-            this.core1.changeCycle();
+
         }
         System.out.println("SALI! COre1");
 

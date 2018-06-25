@@ -35,14 +35,12 @@ public class Processor {
     private DataParser dataParser;
 
     public CyclicBarrier cyclicBarrier;
-    public boolean bothCoresFinished;
+    //public boolean bothCoresFinished;
 
     private Semaphore instructionBus;
     private Semaphore dataBus;
 
     private Object lock1;
-
-    private boolean finishAll;
 
     private MainThread mainThread;
 
@@ -54,15 +52,18 @@ public class Processor {
         this.fillMainMemory();
         this.instructionMemory = new ArrayList<InstructionBlock>();
         this.start = true;
-        this.bothCoresFinished = false;
-        this.finishAll = false;
+
+        //this.bothCoresFinished = false;
+
         this.clock = 0;
         this.quantum = 0;
         this.instructionBus = new Semaphore(1, true);
         this.dataBus = new Semaphore(1, true);
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
+
         this.cyclicBarrier = new CyclicBarrier(4);
+
         this.dataParser = new DataParser(this);
         this.dataCacheCore0 = new DataCache();
         this.dataCacheCore1 = new DataCache();
@@ -71,8 +72,8 @@ public class Processor {
         this.userStart();
         this.contextQueueInitialSize = this.contextQueue.size();
         this.mainThread = new MainThread(this);
-        Thread controllerTest = new Thread(mainThread);
-        controllerTest.start();
+        Thread controllerThread = new Thread(mainThread);
+        controllerThread.start();
 
         this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this);
@@ -207,14 +208,6 @@ public class Processor {
 
     public InstructionCache getInstructionCacheCore1() {
         return instructionCacheCore1;
-    }
-
-    public boolean isFinishAll() {
-        return finishAll;
-    }
-
-    public void setFinishAll(boolean finishAll) {
-        this.finishAll = finishAll;
     }
 
     public int getContextInitialQueueSize() {

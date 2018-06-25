@@ -61,6 +61,7 @@ public class Core0 extends Core {
         }
         if (this.mainContext.getContext().isDone()) {                          //si ya termino
             this.processor.getFinishedContexts().add(this.mainContext.getContext());  //lo guardo en la cola de contextos terminados
+            System.out.println("contexts terminados nucleo 0: " + this.processor.getFinishedContexts().size());
             this.changeSecondaryToPrincipal();
         }
         // no tuve fallo

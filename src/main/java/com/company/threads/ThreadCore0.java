@@ -10,7 +10,6 @@ import com.company.cache.InstructionCacheBlock;
 import com.company.core.Core;
 
 import java.util.Collections;
-import java.util.List;
 
 public class ThreadCore0 implements Runnable {
 
@@ -33,7 +32,6 @@ public class ThreadCore0 implements Runnable {
 
                 if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
                     while (this.isInstructionCachePositionReserved(instructionCacheBlockPos)) {
-                        this.core0.changeCycle();
                         this.core0.changeCycle();
                     }
                     //reserva la posicion de cache
@@ -64,20 +62,16 @@ public class ThreadCore0 implements Runnable {
                 } else if (opCode == 43) {          //SW
                     this.solveSW(instruction);
                 }
-
                 this.context.setCurrentQuantum(this.context.getCurrentQuantum() - 1);
                 //fin de ciclo, espera al resto de hilos a llegar a este punto
-                this.core0.changeCycle();
-                //esperando a finalizar los cambios del tiempo 0
                 this.core0.changeCycle();
             }
             else{
                 this.core0.changeCycle();
-                this.core0.changeCycle();
             }
         }
-        while(this.core0.getProcessor().getContextInitialQueueSize() == this.core0.getProcessor().getFinishedContexts().size()){
-            this.core0.changeCycle();
+        while(this.core0.getProcessor().getContextInitialQueueSize() == this.core0.getProcessor().getFinishedContexts().size()-1){
+            System.out.println("estoy esperando nucleo 0");
             this.core0.changeCycle();
         }
 
@@ -134,7 +128,6 @@ public class ThreadCore0 implements Runnable {
                     // si entre en fallo y no soy el principal
                     while(!this.context.isPrincipal()){
                         this.core0.changeCycle();
-                        this.core0.changeCycle();
                     }
                     //Ejecucion del load
                     this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore0.getWordFromBlock(word));
@@ -150,7 +143,6 @@ public class ThreadCore0 implements Runnable {
                     dataCacheBlockCore0.setState(State.C);
                     // si entre en fallo y no soy el principal
                     while(!this.context.isPrincipal()){
-                        this.core0.changeCycle();
                         this.core0.changeCycle();
                     }
                     //Ejecucion del load
@@ -199,7 +191,7 @@ public class ThreadCore0 implements Runnable {
 
             // si entre en fallo y no soy el principal
             while(!this.context.isPrincipal()){
-                this.core0.changeCycle();
+                System.out.println("no soy en principal");
                 this.core0.changeCycle();
             }
             //Ejecucion del load
@@ -247,7 +239,6 @@ public class ThreadCore0 implements Runnable {
                 // si entre en fallo y no soy el principal
                 while(!this.context.isPrincipal()){
                     this.core0.changeCycle();
-                    this.core0.changeCycle();
                 }
                 // Ejecucion del store
                 dataCacheBlockCore0.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
@@ -291,7 +282,6 @@ public class ThreadCore0 implements Runnable {
                 // si entre en fallo y no soy el principal
                 while(!this.context.isPrincipal()){
                     this.core0.changeCycle();
-                    this.core0.changeCycle();
                 }
                 // Ejecucion del store
                 dataCacheBlockCore0.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
@@ -334,7 +324,6 @@ public class ThreadCore0 implements Runnable {
             dataCacheBlockCore0.setDataBlock(dataBlock1);
             // si entre en fallo y no soy el principal
             while(!this.context.isPrincipal()){
-                this.core0.changeCycle();
                 this.core0.changeCycle();
             }
             // Ejecucion del store
@@ -381,13 +370,11 @@ public class ThreadCore0 implements Runnable {
     private void isDataCachePositionReservedEqualsToMine(int position) {
         while (this.core0.getDataCacheReservedPosition() == position) {
             this.core0.changeCycle();
-            this.core0.changeCycle();
         }
     }
 
     private void tryToReserveDataCachePosition(int cachePos){
         while(this.core0.getDataCacheReservedPosition() != -1){
-            this.core0.changeCycle();
             this.core0.changeCycle();
         }
         this.core0.setDataCacheReservedPosition(cachePos);
@@ -395,7 +382,6 @@ public class ThreadCore0 implements Runnable {
 
     private void tryToReserveInstructionCachePosition(int cachePos){
         while(this.core0.getInstructionCacheReservedPosition() != -1){
-            this.core0.changeCycle();
             this.core0.changeCycle();
         }
         this.core0.setInstructionCacheReservedPosition(cachePos);

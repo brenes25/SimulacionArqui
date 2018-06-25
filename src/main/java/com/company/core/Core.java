@@ -79,10 +79,7 @@ public abstract class Core {
                 break;
             case 63:
                 context.setDone(true);      //FIN
-//                context.printRegisters();
-//                processor.printMainMemory();
-//                System.out.println(this.processor.getDataCacheCore1().toString());
-//                System.out.println(this.processor.getDataCacheCore0().toString());
+                System.out.println("termino el hilillo " + context.getId());
                 break;
             default:
                 break;
@@ -94,6 +91,7 @@ public abstract class Core {
     public void askForInstructionBus() {
         while (!this.processor.getInstructionBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
             try {
+                this.processor.cyclicBarrier.await();
                 this.processor.cyclicBarrier.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -123,6 +121,7 @@ public abstract class Core {
     public void askForDataBus() {
         while (!this.processor.getDataBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
             try {
+                this.processor.cyclicBarrier.await();
                 this.processor.cyclicBarrier.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -176,6 +175,7 @@ public abstract class Core {
 
     public void changeCycle() {
         try {
+            this.processor.cyclicBarrier.await();
             this.processor.cyclicBarrier.await();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -15,6 +15,7 @@ public class Context {
     private boolean isDone;
     private boolean isStopped;
     private boolean isPrincipal;
+    private int id;
 
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
@@ -23,6 +24,7 @@ public class Context {
         this.isDone = false;
         this.isStalled = false;
         this.fillRegisters();
+        this.id = -1;
     }
 
     public void fillRegisters(){
@@ -102,6 +104,14 @@ public class Context {
 
     public void setPrincipal(boolean principal) {
         isPrincipal = principal;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }
 

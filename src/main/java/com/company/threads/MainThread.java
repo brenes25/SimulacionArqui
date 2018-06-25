@@ -28,8 +28,6 @@ public class MainThread implements Runnable{
             processor.getCore0().checkStatus();
             processor.getCore1().checkStatus();
 
-            //poner dos barreras
-
             try {
                 this.processor.cyclicBarrier.await();
             } catch (InterruptedException e) {

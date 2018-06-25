@@ -10,20 +10,22 @@ import java.util.List;
 
 public class DataParser {
 
-
     private static final int INSTRUCTION_MEMORY_START = 384;
-    private static final int INSTRUCTON_BLOCK_SIZE = 16;
+    private static final int INSTRUCTION_BLOCK_SIZE = 16;
     private Processor processor;
+    private int id;
 
     public DataParser(Processor processor) {
         this.processor = processor;
+        id = 0;
     }
 
     public void parseFile(String filename) {
         BufferedReader br = null;
         FileReader fr = null;
+
         int instructionCounter = 0;
-        int pc = (this.processor.getInstructionMemory().size() * INSTRUCTON_BLOCK_SIZE) + INSTRUCTION_MEMORY_START;
+        int pc = (this.processor.getInstructionMemory().size() * INSTRUCTION_BLOCK_SIZE) + INSTRUCTION_MEMORY_START;
         InstructionBlock instructionBlock = new InstructionBlock();
         try {
             fr = new FileReader(filename);
@@ -50,6 +52,8 @@ public class DataParser {
                 }
             }while (sCurrentLine != null);
             Context newContext = new Context(pc,this.processor.getQuantum());
+            newContext.setId(id);
+            id++;
             this.processor.getContextQueue().add(newContext);
         } catch (IOException e) {
             e.printStackTrace();
