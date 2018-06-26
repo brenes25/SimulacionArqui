@@ -17,56 +17,64 @@ public class ThreadCore1 implements Runnable {
     public ThreadCore1(Context context, Core1 core1) {
         this.context = context;
         this.core1 = core1;
+
     }
 
     public void run() {
-        while (this.context != null) {
-            int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
-            int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
-            //va y trae ese bloque de la cache de instrucciones
-            InstructionCacheBlock instructionCacheBlock = this.core1.getInstructionCacheCore1().getBlockFromCache(instructionCacheBlockPos);
+        while (this.core1.getProcessor().getContextInitialQueueSize() != this.core1.getProcessor().getFinishedContexts().size()){
+            if(this.context != null){
+                int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
+                int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
+                //va y trae ese bloque de la cache de instrucciones
+                InstructionCacheBlock instructionCacheBlock = this.core1.getInstructionCache().getBlockFromCache(instructionCacheBlockPos);
 
-            if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
+                if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
 
-                this.core1.askForInstructionBus();
-                //resolver fallo.
-                this.context.setStalled(true);
-                this.core1.goToMemory();
-                //trae bloque de instruccion de memoria.
-                InstructionBlock instructionBlock = (InstructionBlock) this.core1.getProcessor().getInstructionMemory().get(instructionMemoryBlockPos - 24);
-                instructionCacheBlock.setInstructionBlock(instructionBlock);
-                instructionCacheBlock.setLabel(instructionMemoryBlockPos);
+                    this.core1.askForInstructionBus();
+                    //resolver fallo.
+                    this.context.setStalled(true);
+                    this.core1.goToMemory();
+                    //trae bloque de instruccion de memoria.
+                    InstructionBlock instructionBlock = (InstructionBlock) this.core1.getProcessor().getInstructionMemory().get(instructionMemoryBlockPos - 24);
+                    instructionCacheBlock.setInstructionBlock(instructionBlock);
+                    instructionCacheBlock.setLabel(instructionMemoryBlockPos);
 
-                this.context.setStalled(false);
-                this.core1.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
+                    this.context.setStalled(false);
+                    this.core1.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
+                }
+
+                int instructionCacheWord = this.context.getPc() % 16;
+                //se trae el bloque de cache de instrucciones
+                Instruction instruction = this.core1.getCacheInstruction(instructionCacheBlock.getInstructionBlock(), instructionCacheWord);
+                this.context.setPc(this.context.getPc() + 4);
+                int opCode = this.core1.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
+                if (opCode == 35) {               //LW
+                    this.solveLW(instruction);
+                } else if (opCode == 43) {          //SW
+                    this.solveSW(instruction);
+                }
+                this.context.setCurrentQuantum(this.context.getCurrentQuantum()-1);
+                //fin de ciclo, espera al resto de hilos a llegar a este punto
+                this.core1.changeCycle();
+            }
+            else
+            {
+                this.core1.changeCycle();
             }
 
-            int instructionCacheWord = this.context.getPc() % 16;
-            //se trae el bloque de cache de instrucciones
-            Instruction instruction = this.core1.getCacheInstruction(instructionCacheBlock.getInstructionBlock(), instructionCacheWord);
-            this.context.setPc(this.context.getPc() + 4);
-            int opCode = this.core1.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
-            if (opCode == 35) {               //LW
-                this.solveLW(instruction);
-            } else if (opCode == 43) {          //SW
-                this.solveSW(instruction);
-            }
-            this.context.setCurrentQuantum(this.context.getCurrentQuantum()-1);
-            //fin de ciclo, espera al resto de hilos a llegar a este punto
-            this.core1.changeCycle();
         }
-        while(this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-1 ||
-                this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-2){
-            System.out.println("estoy esperando nucleo 1");
-            this.core1.changeCycle();
-
-        }
+//        while(this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-1 ||
+//                this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-2){
+//            System.out.println("estoy esperando nucleo 1");
+//            this.core1.changeCycle();
+//
+//        }
         System.out.println("SALI! COre1");
 
     }
 
     private void solveSW(Instruction instruction) {
-     /*   int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -167,12 +175,12 @@ public class ThreadCore1 implements Runnable {
             dataCacheBlockCore1.getCacheLock().release();
 
             this.core1.getProcessor().getDataBus().release();
-        }*/
+        }
     }
 
 
     private void solveLW(Instruction instruction) {
-        /*int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -200,8 +208,7 @@ public class ThreadCore1 implements Runnable {
 
                     //guarda bloque a cache
                     DataBlock dataBlock1 = new DataBlock();
-                    DataBlock dataBlock2 = new DataBlock();
-                    dataBlock2 = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
+                    DataBlock dataBlock2 = (DataBlock) this.core1.getProcessor().getMainMemory().get(numBlock);
                     Collections.copy(dataBlock1.getWords(),  dataBlock2.getWords());
                     dataCacheBlockCore1.setDataBlock(dataBlock1);
                     dataCacheBlockCore1.setState(State.C);
@@ -260,7 +267,7 @@ public class ThreadCore1 implements Runnable {
             //Libera los candados
             dataCacheBlockCore1.getCacheLock().release();
             this.core1.getProcessor().getDataBus().release();
-        }*/
+        }
     }
 
     public Context getContext() {

@@ -25,8 +25,9 @@ public class MainThread implements Runnable{
             //aumentar ciclos de reloj
             processor.setClock(processor.getClock() + 1);
             //llama a los check status
-            processor.getCore0().checkStatus();
+            //processor.getCore0().checkStatus();
             processor.getCore1().checkStatus();
+            processor.getCore12().checkStatus();
 
             try {
                 this.processor.cyclicBarrier.await();
@@ -37,5 +38,10 @@ public class MainThread implements Runnable{
             }
         }
         System.out.println("SALI");
+        for (int i = 0; i < this.processor.getFinishedContexts().size(); i++) {
+            Context context = (Context) this.processor.getFinishedContexts().get(i);
+            context.printRegisters();
+        }
+        this.processor.printMainMemory();
     }
 }

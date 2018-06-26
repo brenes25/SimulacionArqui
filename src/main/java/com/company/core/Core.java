@@ -33,7 +33,8 @@ public abstract class Core {
     //TODO: algo pasa aca, agregue un if de prueba para que sirviera por el momento
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
-        if(newWord >= instructionBlock.getInstructions().size()){
+        if(newWord >= instructionBlock.getInstructions().size())
+        {
             return (Instruction) instructionBlock.getInstructions().get(instructionBlock.getInstructions().size()-1);
         }
         return (Instruction) instructionBlock.getInstructions().get(newWord);
@@ -90,14 +91,7 @@ public abstract class Core {
 
     public void askForInstructionBus() {
         while (!this.processor.getInstructionBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
-            try {
-                this.processor.cyclicBarrier.await();
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
+            this.changeCycle();
         }
     }
 
@@ -120,14 +114,7 @@ public abstract class Core {
 
     public void askForDataBus() {
         while (!this.processor.getDataBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
-            try {
-                this.processor.cyclicBarrier.await();
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
+            this.changeCycle();
         }
     }
 
@@ -222,9 +209,9 @@ public abstract class Core {
         return this.processor.getDataCacheCore1();
     }
 
-    public InstructionCache getInstructionCacheCore1() {
-        return this.processor.getInstructionCacheCore1();
-    }
+//    public InstructionCache getInstructionCacheCore1() {
+//        return this.processor.getInstructionCacheCore1();
+//    }
 
     public DataCache getCacheCore0() {
         return this.processor.getDataCacheCore0();

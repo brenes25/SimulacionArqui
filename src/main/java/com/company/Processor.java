@@ -30,6 +30,7 @@ public class Processor {
 
     private Core core0;
     private Core core1;
+    private Core core12;
 
     private boolean start;
     private DataParser dataParser;
@@ -62,7 +63,7 @@ public class Processor {
         this.contextQueue  = new ArrayDeque<Context>();
         this.finishedContexts = new ArrayList<Context>();
 
-        this.cyclicBarrier = new CyclicBarrier(4);
+        this.cyclicBarrier = new CyclicBarrier(3);
 
         this.dataParser = new DataParser(this);
         this.dataCacheCore0 = new DataCache();
@@ -75,8 +76,9 @@ public class Processor {
         Thread controllerThread = new Thread(mainThread);
         controllerThread.start();
 
-        this.core0 = new Core0((Context) this.contextQueue.poll(), this);
-        this.core1 = new Core1((Context) this.contextQueue.poll(), this);
+        //this.core0 = new Core0((Context) this.contextQueue.poll(), this);
+        this.core1 = new Core1((Context) this.contextQueue.poll(), this,this.dataCacheCore0,this.instructionCacheCore0,"1");
+        this.core12 = new Core1((Context) this.contextQueue.poll(), this,this.dataCacheCore1,this.instructionCacheCore1,"2");
     }
 
 
@@ -98,7 +100,6 @@ public class Processor {
 
     public void printMainMemory (){
         System.out.println("----------- SOY LA MEMORIA!!!! -----------");
-        System.out.println(mainMemory.size());
         for (int i = 0; i < mainMemory.size(); i++) {
             DataBlock dataBlock = (DataBlock) mainMemory.get(i);
             List data = dataBlock.getWords();
@@ -118,6 +119,8 @@ public class Processor {
 
     public void userStart(){
         Scanner input = new Scanner (System.in);
+        System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
+        this.quantum = Integer.parseInt(input.nextLine());
         while(start){
             System.out.println("Cual hilillo quiere agregar en el sistema");
             this.dataParser.parseFile(PATH + input.nextLine());
@@ -126,8 +129,6 @@ public class Processor {
             if(input.nextLine().equals("no"))
                 this.start = false;
         }
-        System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
-        this.quantum = Integer.parseInt(input.nextLine());
     }
 
     private void fillMainMemory(){
@@ -212,5 +213,9 @@ public class Processor {
 
     public int getContextInitialQueueSize() {
         return contextQueueInitialSize;
+    }
+
+    public Core getCore12() {
+        return core12;
     }
 }

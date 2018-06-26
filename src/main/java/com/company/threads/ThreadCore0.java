@@ -23,7 +23,7 @@ public class ThreadCore0 implements Runnable {
     }
 
     public void run() {
-        while (this.context != null) {
+        /*while (this.context != null) {
             int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
             int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
             //va y trae ese bloque de la cache de instrucciones
@@ -71,7 +71,7 @@ public class ThreadCore0 implements Runnable {
             this.core0.changeCycle();
         }
 
-        System.out.println("SALI COre0");
+        System.out.println("SALI COre0");*/
 
     }
 
