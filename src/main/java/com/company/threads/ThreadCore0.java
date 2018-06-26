@@ -23,54 +23,50 @@ public class ThreadCore0 implements Runnable {
     }
 
     public void run() {
-        while (!this.core0.isBothThreadsFinished()) {
-            if(this.context != null) {
-                int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
-                int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
-                //va y trae ese bloque de la cache de instrucciones
-                InstructionCacheBlock instructionCacheBlock = this.core0.getInstructionCacheCore1().getBlockFromCache(instructionCacheBlockPos);
+        while (this.context != null) {
+            int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
+            int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
+            //va y trae ese bloque de la cache de instrucciones
+            InstructionCacheBlock instructionCacheBlock = this.core0.getInstructionCacheCore1().getBlockFromCache(instructionCacheBlockPos);
 
-                if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
-                    while (this.isInstructionCachePositionReserved(instructionCacheBlockPos)) {
-                        this.core0.changeCycle();
-                    }
-                    //reserva la posicion de cache
-                    this.tryToReserveInstructionCachePosition(instructionCacheBlockPos);
-                    this.core0.askForInstructionBus();
-
-                    //resolver fallo.
-                    this.context.setStalled(true);
-                    this.core0.goToMemory();
-                    //trae bloque de instruccion de memoria.
-                    InstructionBlock instructionBlock = (InstructionBlock) this.core0.getProcessor().getInstructionMemory().get(instructionMemoryBlockPos - 24);
-                    instructionCacheBlock.setInstructionBlock(instructionBlock);
-                    instructionCacheBlock.setLabel(instructionMemoryBlockPos);
-
-                    this.context.setStalled(false);
-                    this.core0.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
-                    //libera la posicion en cache
-                    this.core0.setInstructionCacheReservedPosition(-1);
+            if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
+                while (this.isInstructionCachePositionReserved(instructionCacheBlockPos)) {
+                    this.core0.changeCycle();
                 }
+                //reserva la posicion de cache
+                this.tryToReserveInstructionCachePosition(instructionCacheBlockPos);
+                this.core0.askForInstructionBus();
 
-                int instructionCacheWord = this.context.getPc() % 16;
-                //se trae el bloque de cache de instrucciones
-                Instruction instruction = this.core0.getCacheInstruction(instructionCacheBlock.getInstructionBlock(), instructionCacheWord);
-                this.context.setPc(this.context.getPc() + 4);
-                int opCode = this.core0.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
-                if (opCode == 35) {               //LW
-                    this.solveLW(instruction);
-                } else if (opCode == 43) {          //SW
-                    this.solveSW(instruction);
-                }
-                this.context.setCurrentQuantum(this.context.getCurrentQuantum() - 1);
-                //fin de ciclo, espera al resto de hilos a llegar a este punto
-                this.core0.changeCycle();
+                //resolver fallo.
+                this.context.setStalled(true);
+                this.core0.goToMemory();
+                //trae bloque de instruccion de memoria.
+                InstructionBlock instructionBlock = (InstructionBlock) this.core0.getProcessor().getInstructionMemory().get(instructionMemoryBlockPos - 24);
+                instructionCacheBlock.setInstructionBlock(instructionBlock);
+                instructionCacheBlock.setLabel(instructionMemoryBlockPos);
+
+                this.context.setStalled(false);
+                this.core0.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
+                //libera la posicion en cache
+                this.core0.setInstructionCacheReservedPosition(-1);
             }
-            else{
-                this.core0.changeCycle();
+
+            int instructionCacheWord = this.context.getPc() % 16;
+            //se trae el bloque de cache de instrucciones
+            Instruction instruction = this.core0.getCacheInstruction(instructionCacheBlock.getInstructionBlock(), instructionCacheWord);
+            this.context.setPc(this.context.getPc() + 4);
+            int opCode = this.core0.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
+            if (opCode == 35) {               //LW
+                this.solveLW(instruction);
+            } else if (opCode == 43) {          //SW
+                this.solveSW(instruction);
             }
+            this.context.setCurrentQuantum(this.context.getCurrentQuantum() - 1);
+            //fin de ciclo, espera al resto de hilos a llegar a este punto
+            this.core0.changeCycle();
         }
-        while(this.core0.getProcessor().getContextInitialQueueSize() == this.core0.getProcessor().getFinishedContexts().size()-1){
+        while (this.core0.getProcessor().getContextInitialQueueSize() == this.core0.getProcessor().getFinishedContexts().size() - 1
+                || this.core0.getProcessor().getContextInitialQueueSize() == this.core0.getProcessor().getFinishedContexts().size() - 2) {
             System.out.println("estoy esperando nucleo 0");
             this.core0.changeCycle();
         }
@@ -81,7 +77,8 @@ public class ThreadCore0 implements Runnable {
 
 
     private void solveLW(Instruction instruction) {
-        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        System.out.println("ejecuta load core 0");
+      /*  int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -98,7 +95,7 @@ public class ThreadCore0 implements Runnable {
 
                 //Ejecuta el load
                 this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore0.getWordFromBlock(word));
-            }else {                //Estado es inválido, miss
+            } else {                //Estado es inválido, miss
 
                 //trato de reservar la posicion
                 this.tryToReserveDataCachePosition(cachePos);
@@ -122,11 +119,11 @@ public class ThreadCore0 implements Runnable {
                     DataBlock dataBlock1 = new DataBlock();
                     DataBlock dataBlock2 = new DataBlock();
                     dataBlock2 = (DataBlock) this.core0.getProcessor().getMainMemory().get(numBlock);
-                    Collections.copy(dataBlock1.getWords(), dataBlock2.getWords() );
+                    Collections.copy(dataBlock1.getWords(), dataBlock2.getWords());
                     dataCacheBlockCore0.setDataBlock(dataBlock1);
                     dataCacheBlockCore0.setState(State.C);
                     // si entre en fallo y no soy el principal
-                    while(!this.context.isPrincipal()){
+                    while (!this.context.isPrincipal()) {
                         this.core0.changeCycle();
                     }
                     //Ejecucion del load
@@ -142,7 +139,7 @@ public class ThreadCore0 implements Runnable {
                     dataCacheBlockCore0.setDataBlock(dataBlock1);
                     dataCacheBlockCore0.setState(State.C);
                     // si entre en fallo y no soy el principal
-                    while(!this.context.isPrincipal()){
+                    while (!this.context.isPrincipal()) {
                         this.core0.changeCycle();
                     }
                     //Ejecucion del load
@@ -176,7 +173,7 @@ public class ThreadCore0 implements Runnable {
             this.core0.goToMemory();
 
             //revisa si el bloque de la otra cache estaba modificado
-            if (this.core0.checkOtherCacheStatus(dataCacheBlockCore1,dataCacheBlockCore0,numBlock))
+            if (this.core0.checkOtherCacheStatus(dataCacheBlockCore1, dataCacheBlockCore0, numBlock))
                 dataCacheBlockCore1.setState(State.C);
 
             dataCacheBlockCore1.getCacheLock().release();//libero cache del otro nucleo
@@ -190,7 +187,7 @@ public class ThreadCore0 implements Runnable {
             dataCacheBlockCore0.setState(State.C);
 
             // si entre en fallo y no soy el principal
-            while(!this.context.isPrincipal()){
+            while (!this.context.isPrincipal()) {
                 System.out.println("no soy en principal");
                 this.core0.changeCycle();
             }
@@ -201,11 +198,12 @@ public class ThreadCore0 implements Runnable {
             //Libera los candados
             dataCacheBlockCore0.getCacheLock().release();
             this.core0.getProcessor().getDataBus().release();
-        }
+        }*/
     }
 
     private void solveSW(Instruction instruction) {
-        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        System.out.println("ejecuta store core 0");
+      /*  int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -232,12 +230,12 @@ public class ThreadCore0 implements Runnable {
                 this.core0.blockMyCachePos(dataCacheBlockCore0);
 
                 //Voy a la otra cache a invalidar el bloque.
-                if(dataCacheBlockCore1.getLabel() == numBlock)
+                if (dataCacheBlockCore1.getLabel() == numBlock)
                     dataCacheBlockCore1.setState(State.I);
 
                 dataCacheBlockCore1.getCacheLock().release();
                 // si entre en fallo y no soy el principal
-                while(!this.context.isPrincipal()){
+                while (!this.context.isPrincipal()) {
                     this.core0.changeCycle();
                 }
                 // Ejecucion del store
@@ -262,7 +260,7 @@ public class ThreadCore0 implements Runnable {
                 this.core0.goToMemory();
 
                 //revisar etiqueta de la otra cache
-                if (dataCacheBlockCore1.getLabel() == numBlock){
+                if (dataCacheBlockCore1.getLabel() == numBlock) {
                     // El estado siempre va a estar modificado
                     // escribo el bloque modificado de la otra cache en memoria
                     this.core0.getProcessor().saveInMemory(numBlock, dataCacheBlockCore1.getDataBlock());
@@ -280,7 +278,7 @@ public class ThreadCore0 implements Runnable {
                 dataCacheBlockCore0.setDataBlock(dataBlock1);
 
                 // si entre en fallo y no soy el principal
-                while(!this.context.isPrincipal()){
+                while (!this.context.isPrincipal()) {
                     this.core0.changeCycle();
                 }
                 // Ejecucion del store
@@ -292,8 +290,7 @@ public class ThreadCore0 implements Runnable {
                 dataCacheBlockCore0.getCacheLock().release();
                 this.core0.getProcessor().getDataBus().release();
             }
-        }
-        else{
+        } else {
             //el bloque que ocupo no esta en mi cache
             //trato de reservar la posicion
             this.tryToReserveDataCachePosition(cachePos);
@@ -312,7 +309,7 @@ public class ThreadCore0 implements Runnable {
             this.core0.goToMemory();
 
             //revisa si el bloque de la otra cache estaba modificado y si estaba modificado lo guarda a memoria
-            if(this.core0.checkOtherCacheStatus(dataCacheBlockCore1,dataCacheBlockCore0,numBlock))
+            if (this.core0.checkOtherCacheStatus(dataCacheBlockCore1, dataCacheBlockCore0, numBlock))
                 dataCacheBlockCore1.setState(State.I);
 
             dataCacheBlockCore1.getCacheLock().release();
@@ -323,7 +320,7 @@ public class ThreadCore0 implements Runnable {
             //guardar bloque a cache
             dataCacheBlockCore0.setDataBlock(dataBlock1);
             // si entre en fallo y no soy el principal
-            while(!this.context.isPrincipal()){
+            while (!this.context.isPrincipal()) {
                 this.core0.changeCycle();
             }
             // Ejecucion del store
@@ -337,13 +334,13 @@ public class ThreadCore0 implements Runnable {
             dataCacheBlockCore0.getCacheLock().release();
 
             this.core0.getProcessor().getDataBus().release();
-        }
+        }*/
     }
 
     public Context getContext() {
         try {
             return context;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -373,15 +370,15 @@ public class ThreadCore0 implements Runnable {
         }
     }
 
-    private void tryToReserveDataCachePosition(int cachePos){
-        while(this.core0.getDataCacheReservedPosition() != -1){
+    private void tryToReserveDataCachePosition(int cachePos) {
+        while (this.core0.getDataCacheReservedPosition() != -1) {
             this.core0.changeCycle();
         }
         this.core0.setDataCacheReservedPosition(cachePos);
     }
 
-    private void tryToReserveInstructionCachePosition(int cachePos){
-        while(this.core0.getInstructionCacheReservedPosition() != -1){
+    private void tryToReserveInstructionCachePosition(int cachePos) {
+        while (this.core0.getInstructionCacheReservedPosition() != -1) {
             this.core0.changeCycle();
         }
         this.core0.setInstructionCacheReservedPosition(cachePos);

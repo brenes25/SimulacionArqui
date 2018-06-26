@@ -66,7 +66,7 @@ public class ThreadCore1 implements Runnable {
     }
 
     private void solveSW(Instruction instruction) {
-        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+     /*   int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -167,12 +167,12 @@ public class ThreadCore1 implements Runnable {
             dataCacheBlockCore1.getCacheLock().release();
 
             this.core1.getProcessor().getDataBus().release();
-        }
+        }*/
     }
 
 
     private void solveLW(Instruction instruction) {
-        int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
+        /*int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
@@ -260,7 +260,7 @@ public class ThreadCore1 implements Runnable {
             //Libera los candados
             dataCacheBlockCore1.getCacheLock().release();
             this.core1.getProcessor().getDataBus().release();
-        }
+        }*/
     }
 
     public Context getContext() {
