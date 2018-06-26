@@ -69,7 +69,6 @@ public class ThreadCore1 implements Runnable {
 //            this.core1.changeCycle();
 //
 //        }
-        System.out.println("SALI! COre1");
 
     }
 

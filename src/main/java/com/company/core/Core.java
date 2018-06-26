@@ -9,6 +9,7 @@ import com.company.blocks.State;
 import com.company.cache.DataCache;
 import com.company.cache.DataCacheBlock;
 import com.company.cache.InstructionCache;
+import com.company.threads.ThreadCore1;
 
 import java.util.Collections;
 import java.util.concurrent.BrokenBarrierException;
@@ -16,15 +17,16 @@ import java.util.concurrent.BrokenBarrierException;
 public abstract class Core {
 
     Processor processor;
-
+    private Context context;
     private int instructionCacheReservedPosition;
 
     private int dataCacheReservedPosition;
 
     public boolean bothThreadsFinished;
 
-    public Core(Processor processor) {
+    public Core(Context context, Processor processor) {
         this.processor = processor;
+        this.context = context;
         this.instructionCacheReservedPosition = -1;
         this.dataCacheReservedPosition = -1;
         this.bothThreadsFinished = false;
@@ -239,6 +241,10 @@ public abstract class Core {
 
     public boolean isBothThreadsFinished() {
         return bothThreadsFinished;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
 }

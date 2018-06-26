@@ -16,6 +16,7 @@ public class Context {
     private boolean isStopped;
     private boolean isPrincipal;
     private int id;
+    private int cyclesCount;
 
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
@@ -25,6 +26,7 @@ public class Context {
         this.isStalled = false;
         this.fillRegisters();
         this.id = -1;
+        this.cyclesCount = 0;
     }
 
     public void fillRegisters(){
@@ -42,7 +44,7 @@ public class Context {
     }
 
     public void printRegisters(){
-        System.out.println("-------- REGISTERS -------------" + this.id);
+        System.out.println("-------- REGISTERS CONTEXT "+ this.id +" -------------");
         for (int i = 0; i < registers.size(); i++) {
             System.out.print(registers.get(i));
             System.out.print(" - ");
@@ -112,6 +114,14 @@ public class Context {
 
     public int getId() {
         return id;
+    }
+
+    public int getCyclesCount() {
+        return cyclesCount;
+    }
+
+    public void setCyclesCount(int cyclesCount) {
+        this.cyclesCount = cyclesCount;
     }
 }
 

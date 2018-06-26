@@ -35,7 +35,7 @@ public class DataCache {
 
     @Override
     public String toString(){
-        String cache = "-------------  SOY LA CACHE ---------------------" + name + "\n";
+        String cache = "-------------  CACHE " + name +"-------------------\n";
         for (int i = 0; i < this.cache.size(); i++) {
             DataCacheBlock dataCacheBlock = (DataCacheBlock) this.cache.get(i);
             DataBlock dataBlock= dataCacheBlock.getDataBlock();
@@ -44,7 +44,7 @@ public class DataCache {
             }
             cache += " ("+ dataCacheBlock.getState()+") ";
             cache += "("+ dataCacheBlock.getLabel()+") ";
-            cache += "|| ";
+            cache += "| ";
         }
         return cache;
     }

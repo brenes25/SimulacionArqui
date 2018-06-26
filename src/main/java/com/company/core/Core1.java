@@ -10,6 +10,7 @@ import java.util.concurrent.*;
 public class Core1 extends Core {
 
     private ThreadCore1 mainContext;
+    private Context context;
     public CyclicBarrier cyclicBarrier;
     private DataCache myDataCache;
     private DataCache otherDataCache;
@@ -17,7 +18,7 @@ public class Core1 extends Core {
 
     public Core1(Context context, Processor processor,DataCache myDataCache,DataCache otherDataCache,
                  InstructionCache myInstructionCache,String name) {
-        super(processor);
+        super(context, processor);
         this.cyclicBarrier = processor.cyclicBarrier;
         this.myDataCache = myDataCache;
         this.otherDataCache = otherDataCache;
@@ -69,5 +70,6 @@ public class Core1 extends Core {
     public InstructionCache getMyinstructionCache() {
         return myinstructionCache;
     }
+
 
 }

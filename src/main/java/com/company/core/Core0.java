@@ -16,7 +16,7 @@ public class Core0 extends Core {
     public boolean bothThreadsFinished;
 
     public Core0(Context context, Processor processor) {
-        super(processor);
+        super(context, processor);
         context.setPrincipal(true);
         this.bothThreadsFinished = false;
         this.mainContext = new ThreadCore0(context, this);

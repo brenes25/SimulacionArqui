@@ -45,6 +45,8 @@ public class Processor {
 
     private MainThread mainThread;
 
+    private boolean isSlowRun;
+
     public int contextQueueInitialSize;
 
     public Processor() {
@@ -103,15 +105,22 @@ public class Processor {
     }
 
     public void printMainMemory (){
-        System.out.println("----------- SOY LA MEMORIA!!!! -----------");
+
+        System.out.println("----------- MEMORIA -----------");
+        int counter = 0;
         for (int i = 0; i < mainMemory.size(); i++) {
             DataBlock dataBlock = (DataBlock) mainMemory.get(i);
             List data = dataBlock.getWords();
             for (int j = 0; j < data.size(); j++) {
                 System.out.print(data.get(j));
-                System.out.print(" - ");
+                System.out.print(" ");
             }
-            System.out.println();
+            System.out.print("|");
+            counter++;
+            if(counter == 4){
+                System.out.println();
+                counter = 0;
+            }
         }
     }
 
@@ -123,8 +132,12 @@ public class Processor {
 
     public void userStart(){
         Scanner input = new Scanner (System.in);
+        System.out.println("Cual corrida quiere usar? \n 1. Lenta\n 2. Rapida\n");
+        this.isSlowRun = Integer.parseInt(input.nextLine()) == 1;
+
         System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
         this.quantum = Integer.parseInt(input.nextLine());
+
         while(start){
             System.out.println("Cual hilillo quiere agregar en el sistema");
             this.dataParser.parseFile(PATH + input.nextLine());
@@ -221,5 +234,9 @@ public class Processor {
 
     public Core getCore12() {
         return core12;
+    }
+
+    public boolean isSlowRun() {
+        return isSlowRun;
     }
 }
