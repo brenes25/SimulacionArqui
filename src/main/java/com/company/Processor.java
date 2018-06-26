@@ -66,8 +66,8 @@ public class Processor {
         this.cyclicBarrier = new CyclicBarrier(3);
 
         this.dataParser = new DataParser(this);
-        this.dataCacheCore0 = new DataCache();
-        this.dataCacheCore1 = new DataCache();
+        this.dataCacheCore0 = new DataCache("1");
+        this.dataCacheCore1 = new DataCache("12");
         this.instructionCacheCore0 = new InstructionCache();
         this.instructionCacheCore1 = new InstructionCache();
         this.userStart();
@@ -77,8 +77,12 @@ public class Processor {
         controllerThread.start();
 
         //this.core0 = new Core0((Context) this.contextQueue.poll(), this);
-        this.core1 = new Core1((Context) this.contextQueue.poll(), this,this.dataCacheCore0,this.instructionCacheCore0,"1");
-        this.core12 = new Core1((Context) this.contextQueue.poll(), this,this.dataCacheCore1,this.instructionCacheCore1,"2");
+        this.core1 = new Core1((Context) this.contextQueue.poll(), this,
+                this.dataCacheCore0, this.dataCacheCore1,
+                this.instructionCacheCore0,"1");
+        this.core12 = new Core1((Context) this.contextQueue.poll(), this,
+                this.dataCacheCore1, this.dataCacheCore0,
+                this.instructionCacheCore1,"2");
     }
 
 

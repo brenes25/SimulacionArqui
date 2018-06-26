@@ -26,7 +26,7 @@ public class ThreadCore1 implements Runnable {
                 int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
                 int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
                 //va y trae ese bloque de la cache de instrucciones
-                InstructionCacheBlock instructionCacheBlock = this.core1.getInstructionCache().getBlockFromCache(instructionCacheBlockPos);
+                InstructionCacheBlock instructionCacheBlock = this.core1.getMyinstructionCache().getBlockFromCache(instructionCacheBlockPos);
 
                 if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
 
@@ -78,8 +78,8 @@ public class ThreadCore1 implements Runnable {
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
-        DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
-        DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos); //obtener bloque de la otra cache
+        DataCacheBlock dataCacheBlockCore1 = this.core1.getMyDataCache().getBlockFromCache(cachePos);
+        DataCacheBlock dataCacheBlockCore0 = this.core1.getOtherDataCache().getBlockFromCache(cachePos); //obtener bloque de la otra cache
 
         if (dataCacheBlockCore1.getLabel() == numBlock) {
             // El bloque está en la caché
@@ -184,8 +184,8 @@ public class ThreadCore1 implements Runnable {
         int numBlock = memoryPos / 16;
         int cachePos = numBlock % 4;
         int word = (memoryPos % 16) / 4;
-        DataCacheBlock dataCacheBlockCore1 = this.core1.getCacheCore1().getBlockFromCache(cachePos);
-        DataCacheBlock dataCacheBlockCore0 = this.core1.getCacheCore0().getBlockFromCache(cachePos);
+        DataCacheBlock dataCacheBlockCore1 = this.core1.getMyDataCache().getBlockFromCache(cachePos);
+        DataCacheBlock dataCacheBlockCore0 = this.core1.getOtherDataCache().getBlockFromCache(cachePos);
 
         if (dataCacheBlockCore1.getLabel() == numBlock) {
             // El bloque está en la caché

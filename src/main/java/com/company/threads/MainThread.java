@@ -43,5 +43,7 @@ public class MainThread implements Runnable{
             context.printRegisters();
         }
         this.processor.printMainMemory();
+        System.out.println(this.processor.getCore1().getCacheCore0().toString());
+        System.out.println(this.processor.getCore12().getCacheCore1().toString());
     }
 }

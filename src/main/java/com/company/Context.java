@@ -42,7 +42,7 @@ public class Context {
     }
 
     public void printRegisters(){
-        System.out.println("-------- REGISTERS -------------");
+        System.out.println("-------- REGISTERS -------------" + this.id);
         for (int i = 0; i < registers.size(); i++) {
             System.out.print(registers.get(i));
             System.out.print(" - ");

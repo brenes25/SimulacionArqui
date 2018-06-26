@@ -33,10 +33,6 @@ public abstract class Core {
     //TODO: algo pasa aca, agregue un if de prueba para que sirviera por el momento
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
-        if(newWord >= instructionBlock.getInstructions().size())
-        {
-            return (Instruction) instructionBlock.getInstructions().get(instructionBlock.getInstructions().size()-1);
-        }
         return (Instruction) instructionBlock.getInstructions().get(newWord);
     }
 

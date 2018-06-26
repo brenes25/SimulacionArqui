@@ -11,14 +11,17 @@ public class Core1 extends Core {
 
     private ThreadCore1 mainContext;
     public CyclicBarrier cyclicBarrier;
-    private DataCache dataCache;
-    private InstructionCache instructionCache;
+    private DataCache myDataCache;
+    private DataCache otherDataCache;
+    private InstructionCache myinstructionCache;
 
-    public Core1(Context context, Processor processor,DataCache dataCache, InstructionCache instructionCache, String name) {
+    public Core1(Context context, Processor processor,DataCache myDataCache,DataCache otherDataCache,
+                 InstructionCache myInstructionCache,String name) {
         super(processor);
         this.cyclicBarrier = processor.cyclicBarrier;
-        this.dataCache = dataCache;
-        this.instructionCache = instructionCache;
+        this.myDataCache = myDataCache;
+        this.otherDataCache = otherDataCache;
+        this.myinstructionCache = myInstructionCache;
         this.mainContext = new ThreadCore1(context, this);
         Thread thread = new Thread(this.mainContext, name);
         thread.start();
@@ -55,11 +58,16 @@ public class Core1 extends Core {
         this.processor = processor;
     }
 
-    public DataCache getDataCache() {
-        return dataCache;
+    public DataCache getMyDataCache() {
+        return myDataCache;
     }
 
-    public InstructionCache getInstructionCache() {
-        return instructionCache;
+    public DataCache getOtherDataCache() {
+        return otherDataCache;
     }
+
+    public InstructionCache getMyinstructionCache() {
+        return myinstructionCache;
+    }
+
 }

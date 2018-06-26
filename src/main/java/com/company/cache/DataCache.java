@@ -8,9 +8,11 @@ import java.util.List;
 
 public class DataCache {
     private List cache;
+    private String name;
 
-    public DataCache (){
+    public DataCache (String name){
         this.cache = new ArrayList<DataCacheBlock>();
+        this.name = name;
         for (int i = 0; i < 4; i++) {
             List dataBlock = new ArrayList<Integer>();
             for (int j = 0; j < 4; j++) {
@@ -33,7 +35,7 @@ public class DataCache {
 
     @Override
     public String toString(){
-        String cache = "-------------  SOY LA CACHE --------------------- \n";
+        String cache = "-------------  SOY LA CACHE ---------------------" + name + "\n";
         for (int i = 0; i < this.cache.size(); i++) {
             DataCacheBlock dataCacheBlock = (DataCacheBlock) this.cache.get(i);
             DataBlock dataBlock= dataCacheBlock.getDataBlock();
