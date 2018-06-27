@@ -17,6 +17,7 @@ public class Context {
     private boolean isPrincipal;
     private int id;
     private int cyclesCount;
+    private boolean pcRead;
 
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
@@ -27,6 +28,7 @@ public class Context {
         this.fillRegisters();
         this.id = -1;
         this.cyclesCount = 0;
+        this.pcRead = false;
     }
 
     public void fillRegisters(){
@@ -122,6 +124,14 @@ public class Context {
 
     public void setCyclesCount(int cyclesCount) {
         this.cyclesCount = cyclesCount;
+    }
+
+    public boolean isPcRead() {
+        return pcRead;
+    }
+
+    public void setPcRead(boolean pcRead) {
+        this.pcRead = pcRead;
     }
 }
 

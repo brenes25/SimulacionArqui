@@ -122,39 +122,13 @@ public abstract class Core {
 
     public void blockMyCachePos(DataCacheBlock dataCacheBlock){
         while(!dataCacheBlock.getCacheLock().tryAcquire()){
-            try {
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-            try {
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
+            this.changeCycle();
         }
     }
 
     public void goToMemory() {
         for (int i = 0; i < 40; i++) {
-            try {
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-            try {
-                this.processor.cyclicBarrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
+            this.changeCycle();
         }
     }
 
@@ -175,6 +149,7 @@ public abstract class Core {
         this.goToMemory();
         // escribo el bloque modificado de la otra cache en memoria
         this.getProcessor().saveInMemory(dataCacheBlockCore.getLabel(), dataCacheBlockCore.getDataBlock());
+        dataCacheBlockCore.setState(State.C);
         this.getProcessor().getDataBus().release(); //libero bus
     }
 
@@ -195,8 +170,9 @@ public abstract class Core {
 
                 Collections.copy(dataBlock1.getWords(), dataBlock.getWords());
                 actual.setDataBlock(dataBlock1);
-                return true;
+
             }
+            return true;
         }
         return false;
     }

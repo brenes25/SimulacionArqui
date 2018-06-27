@@ -63,12 +63,6 @@ public class ThreadCore1 implements Runnable {
             }
 
         }
-//        while(this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-1 ||
-//                this.core1.getProcessor().getContextInitialQueueSize()== this.core1.getProcessor().getFinishedContexts().size()-2){
-//            System.out.println("estoy esperando nucleo 1");
-//            this.core1.changeCycle();
-//
-//        }
 
     }
 
@@ -87,10 +81,12 @@ public class ThreadCore1 implements Runnable {
                 dataCacheBlockCore1.getDataBlock().setWord(word, this.context.getRegisterValue(instruction.getInstructionValue(2)));
 
             } else if (dataCacheBlockCore1.getState().equals(State.C)) {  //Si el estado es compartido
-                dataCacheBlockCore1.setState(State.M);
+
                 this.core1.tryToLockBlock(dataCacheBlockCore0); //intento bloquear el bus y luego el bloque de la otra cache
+
                 // Bloquear mi cache
                 this.core1.blockMyCachePos(dataCacheBlockCore1);
+                dataCacheBlockCore1.setState(State.M);
 
                 //Voy a la otra cache a invalidar el bloque.
                 if(dataCacheBlockCore0.getLabel() == numBlock)
