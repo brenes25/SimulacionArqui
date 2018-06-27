@@ -5,6 +5,13 @@ import com.company.blocks.State;
 
 import java.util.concurrent.Semaphore;
 
+/**
+ * Corresponde a las entradas de la cache de datos.
+ * Tiene un bloque de cache de datos, una etiqueta y un estado. Ademas un semaforo para poder bloquearla.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class DataCacheBlock {
 
     private DataBlock dataBlock;

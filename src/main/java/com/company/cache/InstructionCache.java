@@ -6,6 +6,12 @@ import com.company.blocks.InstructionBlock;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Corresponde a la cache de instrucciones.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class InstructionCache {
     private List cache;
 

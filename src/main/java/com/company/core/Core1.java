@@ -10,8 +10,6 @@ import java.util.concurrent.*;
 public class Core1 extends Core {
 
     private ThreadCore1 mainContext;
-    private Context context;
-    public CyclicBarrier cyclicBarrier;
     private DataCache myDataCache;
     private DataCache otherDataCache;
     private InstructionCache myInstructionCache;
@@ -19,8 +17,6 @@ public class Core1 extends Core {
     public Core1(Context context, Processor processor,DataCache myDataCache,DataCache otherDataCache,
                  InstructionCache myInstructionCache,String name) {
         super(context, processor);
-        this.context = context;
-        this.cyclicBarrier = processor.cyclicBarrier;
         this.myDataCache = myDataCache;
         this.otherDataCache = otherDataCache;
         this.myInstructionCache = myInstructionCache;
@@ -63,11 +59,6 @@ public class Core1 extends Core {
         return processor;
     }
 
-
-    public void setProcessor(Processor processor) {
-        this.processor = processor;
-    }
-
     public DataCache getMyDataCache() {
         return myDataCache;
     }
@@ -80,8 +71,4 @@ public class Core1 extends Core {
         return myInstructionCache;
     }
 
-    @Override
-    public Context getContext() {
-        return this.context;
-    }
 }

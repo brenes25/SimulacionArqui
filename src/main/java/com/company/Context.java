@@ -3,6 +3,12 @@ package com.company;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Corresponde a un hilillo dentro de la simulacion.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class Context {
 
     private static final int REGISTER_NUMBER = 32;
@@ -11,13 +17,9 @@ public class Context {
     private int currentQuantum;
 
     private boolean isStalled;
-    private boolean finishedStalled;
     private boolean isDone;
-    private boolean isStopped;
-    private boolean isPrincipal;
     private int id;
     private int cyclesCount;
-    private boolean pcRead;
 
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
@@ -28,28 +30,43 @@ public class Context {
         this.fillRegisters();
         this.id = -1;
         this.cyclesCount = 0;
-        this.pcRead = false;
     }
 
+    /**
+     * Inicializa los registros con 0.
+     */
     public void fillRegisters(){
         for (int i = 0; i < REGISTER_NUMBER; i++) {
             registers.add(0);
         }
     }
 
-    public int getRegisterValue(int value){
-        return (Integer) this.registers.get(value);
+    /**
+     * Devuelve el valor de un registro.
+     * @param register corresponde al registro al cual se le saca el valor.
+     * @return el valor del registro.
+     */
+    public int getRegisterValue(int register){
+        return (Integer) this.registers.get(register);
     }
 
+    /**
+     * Guarda un valor en registro.
+     * @param register
+     * @param value
+     */
     public void setRegisterValue(int register, int value){
         this.registers.set(register, value);
     }
 
+    /**
+     * Imprime los registros del contexto.
+     */
     public void printRegisters(){
-        System.out.println("-------- REGISTERS CONTEXT "+ this.id +" -------------");
+        System.out.println(" ----- Registros del contexto " + this.id + " -----");
         for (int i = 0; i < registers.size(); i++) {
             System.out.print(registers.get(i));
-            System.out.print(" - ");
+            System.out.print("  ");
         }
         System.out.println();
     }
@@ -86,30 +103,6 @@ public class Context {
         isDone = done;
     }
 
-    public boolean isStopped() {
-        return isStopped;
-    }
-
-    public void setStopped(boolean stopped) {
-        isStopped = stopped;
-    }
-
-    public boolean isFinishedStalled() {
-        return finishedStalled;
-    }
-
-    public void setFinishedStalled(boolean finishedStalled) {
-        this.finishedStalled = finishedStalled;
-    }
-
-    public boolean isPrincipal() {
-        return isPrincipal;
-    }
-
-    public void setPrincipal(boolean principal) {
-        isPrincipal = principal;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -126,12 +119,5 @@ public class Context {
         this.cyclesCount = cyclesCount;
     }
 
-    public boolean isPcRead() {
-        return pcRead;
-    }
-
-    public void setPcRead(boolean pcRead) {
-        this.pcRead = pcRead;
-    }
 }
 

@@ -16,23 +16,14 @@ import java.util.concurrent.BrokenBarrierException;
 
 public abstract class Core {
 
-    Processor processor;
-    private Context context;
-    private int instructionCacheReservedPosition;
-
-    private int dataCacheReservedPosition;
-
-    public boolean bothThreadsFinished;
+    protected Processor processor;
+    public Context context;
 
     public Core(Context context, Processor processor) {
         this.processor = processor;
         this.context = context;
-        this.instructionCacheReservedPosition = -1;
-        this.dataCacheReservedPosition = -1;
-        this.bothThreadsFinished = false;
     }
 
-    //TODO: algo pasa aca, agregue un if de prueba para que sirviera por el momento
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
         return (Instruction) instructionBlock.getInstructions().get(newWord);
@@ -78,7 +69,6 @@ public abstract class Core {
                 break;
             case 63:
                 context.setDone(true);      //FIN
-                System.out.println("termino el hilillo " + context.getId());
                 break;
             default:
                 break;
@@ -181,44 +171,16 @@ public abstract class Core {
         return this.processor.getDataCacheCore1();
     }
 
-//    public InstructionCache getInstructionCacheCore1() {
-//        return this.processor.getInstructionCacheCore1();
-//    }
-
     public DataCache getCacheCore0() {
         return this.processor.getDataCacheCore0();
-    }
-
-    public InstructionCache getInstructionCacheCore0() {
-        return this.processor.getInstructionCacheCore0();
     }
 
     public Processor getProcessor() {
         return processor;
     }
 
-    public int getInstructionCacheReservedPosition() {
-        return instructionCacheReservedPosition;
-    }
-
-    public void setInstructionCacheReservedPosition(int instructionCacheReservedPosition) {
-        this.instructionCacheReservedPosition = instructionCacheReservedPosition;
-    }
-
-    public int getDataCacheReservedPosition() {
-        return dataCacheReservedPosition;
-    }
-
-    public void setDataCacheReservedPosition(int dataCacheReservedPosition) {
-        this.dataCacheReservedPosition = dataCacheReservedPosition;
-    }
-
-    public boolean isBothThreadsFinished() {
-        return bothThreadsFinished;
-    }
-
     public Context getContext() {
-        return context;
+        return this.context;
     }
 
 }

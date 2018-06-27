@@ -4,7 +4,6 @@ import com.company.blocks.DataBlock;
 import com.company.blocks.InstructionBlock;
 import com.company.cache.*;
 import com.company.core.Core;
-import com.company.core.Core0;
 import com.company.core.Core1;
 import com.company.threads.MainThread;
 
@@ -28,15 +27,12 @@ public class Processor {
     private Queue contextQueue;
     private List finishedContexts;
 
-    private Core core0;
     private Core core1;
-    private Core core12;
+    private Core core0;
 
-    private boolean start;
     private DataParser dataParser;
 
     public CyclicBarrier cyclicBarrier;
-    //public boolean bothCoresFinished;
 
     private Semaphore instructionBus;
     private Semaphore dataBus;
@@ -54,9 +50,6 @@ public class Processor {
         this.mainMemory = new ArrayList<DataBlock>();
         this.fillMainMemory();
         this.instructionMemory = new ArrayList<InstructionBlock>();
-        this.start = true;
-
-        //this.bothCoresFinished = false;
 
         this.clock = 0;
         this.quantum = 0;
@@ -68,8 +61,8 @@ public class Processor {
         this.cyclicBarrier = new CyclicBarrier(3);
 
         this.dataParser = new DataParser(this);
-        this.dataCacheCore0 = new DataCache("1");
-        this.dataCacheCore1 = new DataCache("12");
+        this.dataCacheCore0 = new DataCache("0");
+        this.dataCacheCore1 = new DataCache("1");
         this.instructionCacheCore0 = new InstructionCache();
         this.instructionCacheCore1 = new InstructionCache();
         this.userStart();
@@ -82,9 +75,9 @@ public class Processor {
         this.core1 = new Core1((Context) this.contextQueue.poll(), this,
                 this.dataCacheCore0, this.dataCacheCore1,
                 this.instructionCacheCore0,"1");
-        this.core12 = new Core1((Context) this.contextQueue.poll(), this,
+        this.core0 = new Core1((Context) this.contextQueue.poll(), this,
                 this.dataCacheCore1, this.dataCacheCore0,
-                this.instructionCacheCore1,"2");
+                this.instructionCacheCore1,"0");
     }
 
 
@@ -188,10 +181,6 @@ public class Processor {
         }
     }
 
-    public Core getCore0() {
-        return core0;
-    }
-
     public Core getCore1() {
         return core1;
     }
@@ -230,16 +219,12 @@ public class Processor {
         return dataCacheCore1;
     }
 
-    public InstructionCache getInstructionCacheCore1() {
-        return instructionCacheCore1;
-    }
-
     public int getContextInitialQueueSize() {
         return contextQueueInitialSize;
     }
 
-    public Core getCore12() {
-        return core12;
+    public Core getCore0() {
+        return core0;
     }
 
     public boolean isSlowRun() {

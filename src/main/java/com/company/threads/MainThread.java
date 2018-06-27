@@ -2,7 +2,6 @@ package com.company.threads;
 
 import com.company.*;
 
-import java.awt.event.KeyEvent;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
@@ -35,8 +34,8 @@ public class MainThread implements Runnable{
                 System.out.println("Reloj: " + this.processor.getClock());
                 if (this.processor.getCore1().getContext() != null)
                     System.out.println("El hilillo " + this.processor.getCore1().getContext().getId()+ " está corriendo, core 1.");
-                if (this.processor.getCore12().getContext() != null)
-                    System.out.println("El hilillo " + this.processor.getCore12().getContext().getId()+ " está corriendo, core 0.");
+                if (this.processor.getCore0().getContext() != null)
+                    System.out.println("El hilillo " + this.processor.getCore0().getContext().getId()+ " está corriendo, core 0.");
 
                 this.cycleCount = 0;
                 Scanner input = new Scanner (System.in);
@@ -46,12 +45,12 @@ public class MainThread implements Runnable{
             if (this.processor.getCore1().getContext() != null)
                 this.processor.getCore1().getContext().setCyclesCount(this.processor.getCore1().getContext().getCyclesCount() +1);
 
-            if (this.processor.getCore12().getContext() != null)
-                this.processor.getCore12().getContext().setCyclesCount(this.processor.getCore12().getContext().getCyclesCount() +1);
+            if (this.processor.getCore0().getContext() != null)
+                this.processor.getCore0().getContext().setCyclesCount(this.processor.getCore0().getContext().getCyclesCount() +1);
             //llama a los check status
             //processor.getCore0().checkStatus();
             processor.getCore1().checkStatus();
-            processor.getCore12().checkStatus();
+            processor.getCore0().checkStatus();
 
             try {
                 this.processor.cyclicBarrier.await();
@@ -70,6 +69,6 @@ public class MainThread implements Runnable{
         }
         this.processor.printMainMemory();
         System.out.println(this.processor.getCore1().getCacheCore0().toString());
-        System.out.println(this.processor.getCore12().getCacheCore1().toString());
+        System.out.println(this.processor.getCore0().getCacheCore1().toString());
     }
 }
