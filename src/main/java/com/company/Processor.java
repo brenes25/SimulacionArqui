@@ -10,9 +10,15 @@ import com.company.threads.MainThread;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Corresponde al procesador de la simulación
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class Processor {
 
-    private static final String PATH = "./src/main/java/resources/";
+    private static final String PATH = "./resources/";
 
     private DataCache dataCacheCore0;
     private InstructionCache instructionCacheCore0;
@@ -97,18 +103,23 @@ public class Processor {
         }
     }
 
+    /**
+     * Imprime los valores de la memoria principal.
+     */
     public void printMainMemory (){
 
-        System.out.println("----------- MEMORIA -----------");
+        System.out.println(" ----- Memoria Principal ----- ");
         int counter = 0;
         for (int i = 0; i < mainMemory.size(); i++) {
             DataBlock dataBlock = (DataBlock) mainMemory.get(i);
             List data = dataBlock.getWords();
             for (int j = 0; j < data.size(); j++) {
                 System.out.print(data.get(j));
+                if(data.get(j).toString().length() == 1)
+                    System.out.print(" ");
                 System.out.print(" ");
             }
-            System.out.print("|");
+            System.out.print("|  ");
             counter++;
             if(counter == 4){
                 System.out.println();
