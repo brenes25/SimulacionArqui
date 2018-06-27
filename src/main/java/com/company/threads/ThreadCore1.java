@@ -66,6 +66,10 @@ public class ThreadCore1 implements Runnable {
 
     }
 
+    /**
+     * Corresponde al metodo que resuelve la instruccion store.
+     * @param instruction
+     */
     private void solveSW(Instruction instruction) {
         int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
@@ -101,13 +105,12 @@ public class ThreadCore1 implements Runnable {
 
             } else {   //Si el estado es invalido
 
-                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
-//                // Bloquear mi cache
-//                this.core1.blockMyCachePos(dataCacheBlockCore1);
+                //se piden todos los candados(mi cache, el bus y la otra cache)
+                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
 
                 dataCacheBlockCore1.setState(State.M);
                 this.context.setStalled(true);
-                //guarda bloque de memoria en la cache del nucleo 1
+                //guarda bloque de memoria en la cache
                 this.core1.goToMemory();
 
                 //revisar etiqueta de la otra cache
@@ -173,7 +176,10 @@ public class ThreadCore1 implements Runnable {
         }
     }
 
-
+    /**
+     * 
+     * @param instruction
+     */
     private void solveLW(Instruction instruction) {
         int memoryPos = instruction.getInstructionValue(3) + this.context.getRegisterValue(instruction.getInstructionValue(1));
         int numBlock = memoryPos / 16;
