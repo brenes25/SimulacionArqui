@@ -14,15 +14,16 @@ public class Core1 extends Core {
     public CyclicBarrier cyclicBarrier;
     private DataCache myDataCache;
     private DataCache otherDataCache;
-    private InstructionCache myinstructionCache;
+    private InstructionCache myInstructionCache;
 
     public Core1(Context context, Processor processor,DataCache myDataCache,DataCache otherDataCache,
                  InstructionCache myInstructionCache,String name) {
         super(context, processor);
+        this.context = context;
         this.cyclicBarrier = processor.cyclicBarrier;
         this.myDataCache = myDataCache;
         this.otherDataCache = otherDataCache;
-        this.myinstructionCache = myInstructionCache;
+        this.myInstructionCache = myInstructionCache;
         this.mainContext = new ThreadCore1(context, this);
         Thread thread = new Thread(this.mainContext, name);
         thread.start();
@@ -34,14 +35,16 @@ public class Core1 extends Core {
                 this.processor.getFinishedContexts().add(this.mainContext.getContext());                //lo guardo en la cola de contextos terminados
                 System.out.println("contexts terminados nucleo 1: " + this.processor.getFinishedContexts().size());
                 if (!this.processor.getContextQueue().isEmpty()) {                                        //si hay hilillos en la cola
-                    this.mainContext.setContext(this.processor.getNextContext());     //saco uno
+                    this.context = this.processor.getNextContext();
+                    this.mainContext.setContext(this.context);     //saco uno
                 } else {
                     this.mainContext.setContext(null);
                 }
             } else if (this.mainContext.getContext().getCurrentQuantum() == 0) {                            //si se le acabo el quantum y no ha terminado
                 this.processor.getContextQueue().add(this.mainContext.getContext());                    //lo guarda en la cola de contextos
                 if (!this.processor.getContextQueue().isEmpty()) {
-                    this.mainContext.setContext(this.processor.getNextContext());                           //trae el sig
+                    this.context = this.processor.getNextContext();
+                    this.mainContext.setContext(this.context);                           //trae el sig
                 }
                 else{
                     this.mainContext.setContext(null);
@@ -67,9 +70,12 @@ public class Core1 extends Core {
         return otherDataCache;
     }
 
-    public InstructionCache getMyinstructionCache() {
-        return myinstructionCache;
+    public InstructionCache getMyInstructionCache() {
+        return myInstructionCache;
     }
 
-
+    @Override
+    public Context getContext() {
+        return this.context;
+    }
 }

@@ -26,7 +26,7 @@ public class ThreadCore1 implements Runnable {
                 int instructionMemoryBlockPos = this.context.getPc() / 16;          //saca el numero de bloque
                 int instructionCacheBlockPos = instructionMemoryBlockPos % 4;       //saca la posicion en cache
                 //va y trae ese bloque de la cache de instrucciones
-                InstructionCacheBlock instructionCacheBlock = this.core1.getMyinstructionCache().getBlockFromCache(instructionCacheBlockPos);
+                InstructionCacheBlock instructionCacheBlock = this.core1.getMyInstructionCache().getBlockFromCache(instructionCacheBlockPos);
 
                 if (instructionCacheBlock.getLabel() != instructionMemoryBlockPos) {  //miss
 
