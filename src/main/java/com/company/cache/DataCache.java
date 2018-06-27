@@ -6,6 +6,12 @@ import com.company.blocks.State;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Corresponde a la cache de datos.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class DataCache {
     private List cache;
     private String name;

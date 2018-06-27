@@ -17,14 +17,13 @@ import java.util.concurrent.BrokenBarrierException;
 public abstract class Core {
 
     protected Processor processor;
-    private Context context;
+    public Context context;
 
     public Core(Context context, Processor processor) {
         this.processor = processor;
         this.context = context;
     }
 
-    //TODO: algo pasa aca, agregue un if de prueba para que sirviera por el momento
     public Instruction getCacheInstruction(InstructionBlock instructionBlock, int word) {
         int newWord = word / 4;
         return (Instruction) instructionBlock.getInstructions().get(newWord);
@@ -181,7 +180,7 @@ public abstract class Core {
     }
 
     public Context getContext() {
-        return context;
+        return this.context;
     }
 
 }

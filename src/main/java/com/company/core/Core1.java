@@ -10,7 +10,6 @@ import java.util.concurrent.*;
 public class Core1 extends Core {
 
     private ThreadCore1 mainContext;
-    private Context context;
     private DataCache myDataCache;
     private DataCache otherDataCache;
     private InstructionCache myInstructionCache;

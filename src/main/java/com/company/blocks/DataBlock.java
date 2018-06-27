@@ -2,6 +2,12 @@ package com.company.blocks;
 
 import java.util.*;
 
+/**
+ * Corresponde a un bloque de la cache de datos, contiene una lista de palabras.
+ *@author Silvia Brenes
+ *@author María José Cubero
+ *@author Hernán Madrigal
+ */
 public class DataBlock {
    private List words;
 

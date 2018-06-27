@@ -9,6 +9,12 @@ import com.company.core.*;
 
 import java.util.Collections;
 
+/**
+ * Hilo que simula la implementacion de los hilillos.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class ThreadCore1 implements Runnable {
 
     private Context context;
@@ -40,15 +46,16 @@ public class ThreadCore1 implements Runnable {
                     instructionCacheBlock.setLabel(instructionMemoryBlockPos);
 
                     this.context.setStalled(false);
-                    this.core1.getProcessor().getInstructionBus().release(); //suelto el bus despues de resolver el fallo.
-                }
+                    //suelto el bus despues de resolver el fallo.
+                    this.core1.getProcessor().getInstructionBus().release();
+            }
 
                 int instructionCacheWord = this.context.getPc() % 16;
                 //se trae el bloque de cache de instrucciones
                 Instruction instruction = this.core1.getCacheInstruction(instructionCacheBlock.getInstructionBlock(), instructionCacheWord);
                 this.context.setPc(this.context.getPc() + 4);
                 int opCode = this.core1.decodeInstruction(instruction, this.context); //decodificar y resolver instruction
-                if (opCode == 35) {               //LW
+                if (opCode == 35) {                 //LW
                     this.solveLW(instruction);
                 } else if (opCode == 43) {          //SW
                     this.solveSW(instruction);
@@ -61,13 +68,11 @@ public class ThreadCore1 implements Runnable {
             {
                 this.core1.changeCycle();
             }
-
         }
-
     }
 
     /**
-     * Corresponde al metodo que resuelve la instruccion store.
+     * Resuelve la instruccion store.
      * @param instruction
      */
     private void solveSW(Instruction instruction) {
@@ -86,10 +91,9 @@ public class ThreadCore1 implements Runnable {
 
             } else if (dataCacheBlockCore1.getState().equals(State.C)) {  //Si el estado es compartido
 
-                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
+                //se piden todos los candados(mi cache, el bus y la otra cache)
+                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
 
-//                // Bloquear mi cache
-//                this.core1.blockMyCachePos(dataCacheBlockCore1);
                 dataCacheBlockCore1.setState(State.M);
 
                 //Voy a la otra cache a invalidar el bloque.
@@ -145,9 +149,9 @@ public class ThreadCore1 implements Runnable {
                 //mi cache tiene un bloque en estado modificado
                 this.core1.saveModifiedBlock(dataCacheBlockCore1);
             }
+            //se piden todos los candados(mi cache, el bus y la otra cache)
             this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
-//            // Bloquear mi cache
-//            this.core1.blockMyCachePos(dataCacheBlockCore1);
+
             this.core1.goToMemory();
             this.context.setStalled(true);
             //revisa si el bloque de la otra cache estaba modificado y si estaba modificado lo guarda a memoria
@@ -177,7 +181,7 @@ public class ThreadCore1 implements Runnable {
     }
 
     /**
-     * 
+     * Resuelve la instruccion load.
      * @param instruction
      */
     private void solveLW(Instruction instruction) {
@@ -195,9 +199,8 @@ public class ThreadCore1 implements Runnable {
                 this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
             } else {
                 //Estado es inválido, miss
+                //se piden todos los candados(mi cache, el bus y la otra cache)
                 this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
-//                // Bloquear mi cache
-//                this.core1.blockMyCachePos(dataCacheBlockCore1);
                 this.context.setStalled(true);
                 this.core1.goToMemory();
 
@@ -242,9 +245,9 @@ public class ThreadCore1 implements Runnable {
                 this.core1.saveModifiedBlock(dataCacheBlockCore1);
             }
             // el bloque no estaba modificado
+            //se piden todos los candados(mi cache, el bus y la otra cache)
             this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
-//            // Bloquear mi cache
-//            this.core1.blockMyCachePos(dataCacheBlockCore1);
+
             this.context.setStalled(true);
             this.core1.goToMemory();
 

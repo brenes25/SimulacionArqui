@@ -8,6 +8,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Carga las instrucciones de los archivos a la memoria de instrucciones.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class DataParser {
 
     private static final int INSTRUCTION_MEMORY_START = 384;
@@ -20,6 +26,10 @@ public class DataParser {
         id = 0;
     }
 
+    /**
+     * Parsea el archivo indicando, creando contextos y agregándolos a la cola.
+     * @param filename corresponde al nombre del archivo a cargar.
+     */
     public void parseFile(String filename) {
         BufferedReader br = null;
         FileReader fr = null;

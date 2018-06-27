@@ -2,6 +2,13 @@ package com.company.cache;
 
 import com.company.blocks.InstructionBlock;
 
+/**
+ * Corresponde a las entradas de la cache de instrucciones.
+ * Tiene un bloque de cache de instrucciones y una etiqueta.
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class InstructionCacheBlock {
     private InstructionBlock instructionBlock;
     private int label;
