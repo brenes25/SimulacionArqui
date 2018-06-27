@@ -98,13 +98,15 @@ public abstract class Core {
      *
      * @param dataCacheBlock
      */
-    public void tryToLockBlock(DataCacheBlock dataCacheBlock) {
+    public void tryToLockBlock(DataCacheBlock dataCacheBlock, DataCacheBlock myDataCacheBlock) {
         boolean blockLocked;
         do {
+            blockMyCachePos(myDataCacheBlock);
             this.askForDataBus();
             blockLocked = this.getBlockLock(dataCacheBlock);  //pide candado sobre bloque de la otra cache.
             if (!blockLocked) {
                 this.getProcessor().getDataBus().release();
+                myDataCacheBlock.getCacheLock().release();
                 this.changeCycle();
             }
         } while (!blockLocked);
@@ -165,11 +167,7 @@ public abstract class Core {
             // el bloque estaba en la otra cache
             if (target.getState().equals(State.M)) {
                 // escribo el bloque modificado de la otra cache en memoria
-                DataBlock dataBlock = (DataBlock) this.getProcessor().getMainMemory().get(numBlock);
-                DataBlock dataBlock1 = new DataBlock();
-
-                Collections.copy(dataBlock1.getWords(), dataBlock.getWords());
-                actual.setDataBlock(dataBlock1);
+                this.getProcessor().saveInMemory(numBlock,target.getDataBlock());
 
             }
             return true;

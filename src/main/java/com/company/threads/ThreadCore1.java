@@ -82,10 +82,10 @@ public class ThreadCore1 implements Runnable {
 
             } else if (dataCacheBlockCore1.getState().equals(State.C)) {  //Si el estado es compartido
 
-                this.core1.tryToLockBlock(dataCacheBlockCore0); //intento bloquear el bus y luego el bloque de la otra cache
+                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
 
-                // Bloquear mi cache
-                this.core1.blockMyCachePos(dataCacheBlockCore1);
+//                // Bloquear mi cache
+//                this.core1.blockMyCachePos(dataCacheBlockCore1);
                 dataCacheBlockCore1.setState(State.M);
 
                 //Voy a la otra cache a invalidar el bloque.
@@ -101,9 +101,9 @@ public class ThreadCore1 implements Runnable {
 
             } else {   //Si el estado es invalido
 
-                this.core1.tryToLockBlock(dataCacheBlockCore0); //intento bloquear el bus y luego el bloque de la otra cache
-                // Bloquear mi cache
-                this.core1.blockMyCachePos(dataCacheBlockCore1);
+                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
+//                // Bloquear mi cache
+//                this.core1.blockMyCachePos(dataCacheBlockCore1);
 
                 dataCacheBlockCore1.setState(State.M);
                 this.context.setStalled(true);
@@ -142,9 +142,9 @@ public class ThreadCore1 implements Runnable {
                 //mi cache tiene un bloque en estado modificado
                 this.core1.saveModifiedBlock(dataCacheBlockCore1);
             }
-            this.core1.tryToLockBlock(dataCacheBlockCore0);
-            // Bloquear mi cache
-            this.core1.blockMyCachePos(dataCacheBlockCore1);
+            this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
+//            // Bloquear mi cache
+//            this.core1.blockMyCachePos(dataCacheBlockCore1);
             this.core1.goToMemory();
             this.context.setStalled(true);
             //revisa si el bloque de la otra cache estaba modificado y si estaba modificado lo guarda a memoria
@@ -189,9 +189,9 @@ public class ThreadCore1 implements Runnable {
                 this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
             } else {
                 //Estado es inválido, miss
-                this.core1.tryToLockBlock(dataCacheBlockCore0);
-                // Bloquear mi cache
-                this.core1.blockMyCachePos(dataCacheBlockCore1);
+                this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
+//                // Bloquear mi cache
+//                this.core1.blockMyCachePos(dataCacheBlockCore1);
                 this.context.setStalled(true);
                 this.core1.goToMemory();
 
@@ -220,7 +220,7 @@ public class ThreadCore1 implements Runnable {
                     dataCacheBlockCore1.setDataBlock(dataBlock1);
                     dataCacheBlockCore1.setState(State.C);
 
-                    //Ejecucion del laod
+                    //Ejecucion del load
                     this.context.setRegisterValue(instruction.getInstructionValue(2), dataCacheBlockCore1.getWordFromBlock(word));
 
                 }
@@ -236,9 +236,9 @@ public class ThreadCore1 implements Runnable {
                 this.core1.saveModifiedBlock(dataCacheBlockCore1);
             }
             // el bloque no estaba modificado
-            this.core1.tryToLockBlock(dataCacheBlockCore0);
-            // Bloquear mi cache
-            this.core1.blockMyCachePos(dataCacheBlockCore1);
+            this.core1.tryToLockBlock(dataCacheBlockCore0,dataCacheBlockCore1);
+//            // Bloquear mi cache
+//            this.core1.blockMyCachePos(dataCacheBlockCore1);
             this.context.setStalled(true);
             this.core1.goToMemory();
 

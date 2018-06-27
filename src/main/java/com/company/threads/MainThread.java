@@ -62,6 +62,7 @@ public class MainThread implements Runnable{
             }
             this.cycleCount ++;
         }
+        System.out.println("La simulacion duro un total de: " + this.processor.getClock() + " ciclos");
         for (int i = 0; i < this.processor.getFinishedContexts().size(); i++) {
             Context context = (Context) this.processor.getFinishedContexts().get(i);
             context.printRegisters();

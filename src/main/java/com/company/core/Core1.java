@@ -33,11 +33,11 @@ public class Core1 extends Core {
         if(this.mainContext.getContext() != null){
             if (this.mainContext.getContext().isDone()) {                                                //si ya termino
                 this.processor.getFinishedContexts().add(this.mainContext.getContext());                //lo guardo en la cola de contextos terminados
-                System.out.println("contexts terminados nucleo 1: " + this.processor.getFinishedContexts().size());
                 if (!this.processor.getContextQueue().isEmpty()) {                                        //si hay hilillos en la cola
                     this.context = this.processor.getNextContext();
                     this.mainContext.setContext(this.context);     //saco uno
                 } else {
+                    this.context =  null;
                     this.mainContext.setContext(null);
                 }
             } else if (this.mainContext.getContext().getCurrentQuantum() == 0) {                            //si se le acabo el quantum y no ha terminado
@@ -45,10 +45,16 @@ public class Core1 extends Core {
                 if (!this.processor.getContextQueue().isEmpty()) {
                     this.context = this.processor.getNextContext();
                     this.mainContext.setContext(this.context);                           //trae el sig
-                }
-                else{
+                } else{
+                    this.context =  null;
                     this.mainContext.setContext(null);
                 }
+            }
+        }
+        else{
+            if (!this.processor.getContextQueue().isEmpty()) {
+                this.context = this.processor.getNextContext();
+                this.mainContext.setContext(this.context);                           //trae el sig
             }
         }
     }

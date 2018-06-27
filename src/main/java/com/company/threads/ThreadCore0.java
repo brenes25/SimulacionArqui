@@ -107,7 +107,7 @@ public class ThreadCore0 implements Runnable {
                 // Bloqueo mi cache
                 this.core0.blockMyCachePos(dataCacheBlockCore0);
                 //pido el bus y bloqueo la otra cache
-                this.core0.tryToLockBlock(dataCacheBlockCore1);
+                //this.core0.tryToLockBlock(dataCacheBlockCore1);
 
                 //resuelvo el fallo
                 this.core0.goToMemory();
@@ -169,7 +169,7 @@ public class ThreadCore0 implements Runnable {
                 this.core0.saveModifiedBlock(dataCacheBlockCore0);
             }
             // el bloque no estaba modificado
-            this.core0.tryToLockBlock(dataCacheBlockCore1);
+            //this.core0.tryToLockBlock(dataCacheBlockCore1);
             // Bloquear mi cache
             this.core0.blockMyCachePos(dataCacheBlockCore0);
 
@@ -228,7 +228,7 @@ public class ThreadCore0 implements Runnable {
                 this.isDataCachePositionReservedEqualsToMine(cachePos);
 
                 dataCacheBlockCore0.setState(State.M);
-                this.core0.tryToLockBlock(dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
+               // this.core0.tryToLockBlock(dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
                 // Bloquear mi cache
                 this.core0.blockMyCachePos(dataCacheBlockCore0);
 
@@ -254,7 +254,7 @@ public class ThreadCore0 implements Runnable {
                 //cuando ya la pude reservar, me declaro en fallo
                 this.context.setStalled(true);
 
-                this.core0.tryToLockBlock(dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
+                //this.core0.tryToLockBlock(dataCacheBlockCore1); //intento bloquear el bus y luego el bloque de la otra cache
                 // Bloquear mi cache
                 this.core0.blockMyCachePos(dataCacheBlockCore0);
 
@@ -305,7 +305,7 @@ public class ThreadCore0 implements Runnable {
                 //mi cache tiene un bloque en estado modificado
                 this.core0.saveModifiedBlock(dataCacheBlockCore0);
             }
-            this.core0.tryToLockBlock(dataCacheBlockCore1);
+            //this.core0.tryToLockBlock(dataCacheBlockCore1);
             // Bloquear mi cache
             this.core0.blockMyCachePos(dataCacheBlockCore0);
 

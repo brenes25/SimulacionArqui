@@ -130,22 +130,22 @@ public class Processor {
         this.mainMemory.set(index,dataBlock1);
     }
 
-    public void userStart(){ /*
-        Scanner input = new Scanner (System.in);
-        System.out.println("Cual corrida quiere usar? \n 1. Lenta\n 2. Rapida\n");
-        this.isSlowRun = Integer.parseInt(input.nextLine()) == 1;
-
-        System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
-        this.quantum = Integer.parseInt(input.nextLine());
-
-        while(start){
-            System.out.println("Cual hilillo quiere agregar en el sistema");
-            this.dataParser.parseFile(PATH + input.nextLine());
-            this.printInstructionMemory();
-            System.out.println("Desea agregar mas hilillos?");
-            if(input.nextLine().equals("no"))
-                this.start = false;
-        }*/
+    public void userStart(){
+//        Scanner input = new Scanner (System.in);
+//        System.out.println("Cual corrida quiere usar? \n 1. Lenta\n 2. Rapida\n");
+//        this.isSlowRun = Integer.parseInt(input.nextLine()) == 1;
+//
+//        System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
+//        this.quantum = Integer.parseInt(input.nextLine());
+//
+//        while(start){
+//            System.out.println("Cual hilillo quiere agregar en el sistema");
+//            this.dataParser.parseFile(PATH + input.nextLine());
+//            this.printInstructionMemory();
+//            System.out.println("Desea agregar mas hilillos?");
+//            if(input.nextLine().equals("no"))
+//                this.start = false;
+//        }
         this.isSlowRun = false;
         this.quantum = 40;
         for (int i = 0; i < 6; i++) {
