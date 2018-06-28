@@ -41,17 +41,22 @@ public class DataCache {
 
     @Override
     public String toString(){
-        String cache = "-------------  CACHE " + name +"-------------------\n";
+        String cache = " -----  Cache de datos Core " + name +" ----- \n";
         for (int i = 0; i < this.cache.size(); i++) {
             DataCacheBlock dataCacheBlock = (DataCacheBlock) this.cache.get(i);
             DataBlock dataBlock= dataCacheBlock.getDataBlock();
+            String data;
             for (int j = 0; j < dataBlock.getWords().size(); j++) {
-                cache += "  "+ dataBlock.getWord(j);
+                data = String.valueOf(dataBlock.getWord(j));
+                if(data.length() == 1)
+                    data += " ";
+                cache += " " + data;
             }
             cache += " ("+ dataCacheBlock.getState()+") ";
             cache += "("+ dataCacheBlock.getLabel()+") ";
             cache += "| ";
         }
+        cache += "\n";
         return cache;
     }
 }
