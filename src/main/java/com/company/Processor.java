@@ -51,6 +51,9 @@ public class Processor {
 
     public int contextQueueInitialSize;
 
+    /**
+     * Constructor
+     */
     public Processor() {
         this.lock1 = new Object();
         this.mainMemory = new ArrayList<DataBlock>();
@@ -87,7 +90,9 @@ public class Processor {
                 this.instructionCacheCore1,"0");
     }
 
-
+    /**
+     * Imprime los valores de la memoria de instrucciones.
+     */
     private void printInstructionMemory (){
         for (int i = 0; i < instructionMemory.size(); i++) {
             InstructionBlock instructionBlock = (InstructionBlock) instructionMemory.get(i);
@@ -194,6 +199,10 @@ public class Processor {
         return instructionMemory;
     }
 
+    /**
+     * Trae el siguiente contexto a ejecutar de la cola de contextos, y le asigna el quantum
+     * @return el contexto con el quantum actualizado. 
+     */
     public Context getNextContext(){
         Context context = (Context) this.contextQueue.poll();
         context.setCurrentQuantum(this.quantum);

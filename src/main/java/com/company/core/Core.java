@@ -19,6 +19,9 @@ public abstract class Core {
     protected Processor processor;
     public Context context;
 
+    /**
+     * Constructor
+     */
     public Core(Context context, Processor processor) {
         this.processor = processor;
         this.context = context;
@@ -29,6 +32,12 @@ public abstract class Core {
         return (Instruction) instructionBlock.getInstructions().get(newWord);
     }
 
+    /**
+     * Maneja la ejecución de todas las instrucciones, excepto load y store.
+     * @param instruction instrucción actual a ejecutar.
+     * @param context contexto que se está ejecutando en ese momento.
+     * @return
+     */
     public int decodeInstruction(Instruction instruction, Context context) {
         int opCode = (Integer) instruction.getInstruction().get(0);
         switch (opCode) {
@@ -77,6 +86,9 @@ public abstract class Core {
 
     }
 
+    /**
+     * Pide el bus de instrucciones.
+     */
     public void askForInstructionBus() {
         while (!this.processor.getInstructionBus().tryAcquire()) {     // pido el bus y mientras no lo agarro caigo en la barrera
             this.changeCycle();
@@ -84,8 +96,7 @@ public abstract class Core {
     }
 
     /**
-     * Intento adquirir el el bus, si lo logro intento adquirir el candado de la posicion de la otra cache, si no se logra suelto todos
-     *
+     * Intenta adquirir el el bus, si lo logro intenta adquirir el candado de la posicion de la otra cache, si no se logra suelta todos
      * @param dataCacheBlock
      */
     public void tryToLockBlock(DataCacheBlock dataCacheBlock, DataCacheBlock myDataCacheBlock) {
@@ -108,22 +119,37 @@ public abstract class Core {
         }
     }
 
+    /**
+     * Revisa si la posición de cache puede ser bloqueada, en caso de ser positivo, la bloquea.
+     * @param dataCacheBlock
+     * @return
+     */
     public boolean getBlockLock(DataCacheBlock dataCacheBlock) {
         return dataCacheBlock.getCacheLock().tryAcquire();
     }
 
+    /**
+     * Bloque la posición de cache del Core correspondiente.
+     * @param dataCacheBlock
+     */
     public void blockMyCachePos(DataCacheBlock dataCacheBlock){
         while(!dataCacheBlock.getCacheLock().tryAcquire()){
             this.changeCycle();
         }
     }
 
+    /**
+     * Simula ir a memria, que toma 40 ciclos de reloj.
+     */
     public void goToMemory() {
         for (int i = 0; i < 40; i++) {
             this.changeCycle();
         }
     }
 
+    /**
+     * Activa a las barreras para manejar el cambio de ciclos entre los hillos.
+     */
     public void changeCycle() {
         try {
             this.processor.cyclicBarrier.await();
@@ -135,6 +161,10 @@ public abstract class Core {
         }
     }
 
+    /**
+     * Guarda el bloque modificado en memoria.
+     * @param dataCacheBlockCore corresponde al bloque a guardar en memoria.
+     */
     public void saveModifiedBlock(DataCacheBlock dataCacheBlockCore) {
         //el bloque de mi cache estaba modificado
         this.askForDataBus(); //pido bus
@@ -146,8 +176,7 @@ public abstract class Core {
     }
 
     /**
-     * Guardar el bloque de la otra cache en caso de que este modificado.
-     *
+     * Guarda el bloque de la otra cache en caso de que este modificado.
      * @param target
      * @param actual
      * @param numBlock

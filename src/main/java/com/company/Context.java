@@ -21,6 +21,9 @@ public class Context {
     private int id;
     private int cyclesCount;
 
+    /**
+     * Constructor
+     */
     public Context(int pc, int currentQuantum){
         this.registers = new ArrayList<Integer>();
         this.pc = pc;

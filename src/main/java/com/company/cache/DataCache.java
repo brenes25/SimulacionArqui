@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Corresponde a la cache de datos.
+ * Corresponde a la caché de datos.
  * @author Silvia Brenes
  * @author María José Cubero
  * @author Hernán Madrigal
@@ -16,6 +16,9 @@ public class DataCache {
     private List cache;
     private String name;
 
+    /**
+     * Constructor
+     */
     public DataCache (String name){
         this.cache = new ArrayList<DataCacheBlock>();
         this.name = name;

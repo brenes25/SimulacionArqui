@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Corresponde a la cache de instrucciones.
+ * Corresponde a la caché de instrucciones.
  * @author Silvia Brenes
  * @author María José Cubero
  * @author Hernán Madrigal
@@ -15,6 +15,9 @@ import java.util.List;
 public class InstructionCache {
     private List cache;
 
+    /**
+     * Constructor
+     */
     public InstructionCache (){
        this.cache = new ArrayList<InstructionCacheBlock>();
         for (int i = 0; i < 4 ; i++) {
@@ -42,11 +45,11 @@ public class InstructionCache {
         this.cache = cache;
     }
 
-    public void setBlockToCache(InstructionBlock instructionBlock, int block){
-        InstructionCacheBlock newBlock = new InstructionCacheBlock(instructionBlock, block);
-        this.cache.add(block%4, newBlock);
-    }
-
+    /**
+     * Retorna el bloque de instrucciones de caché solicitado según la posición.
+     * @param block
+     * @return
+     */
     public InstructionCacheBlock getBlockFromCache(int block){
         return (InstructionCacheBlock) this.cache.get(block%4);
     }

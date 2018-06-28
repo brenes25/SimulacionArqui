@@ -21,6 +21,9 @@ public class DataParser {
     private Processor processor;
     private int id;
 
+    /**
+     * Constructor
+     */
     public DataParser(Processor processor) {
         this.processor = processor;
         id = 0;

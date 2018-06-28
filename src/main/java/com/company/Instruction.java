@@ -3,7 +3,7 @@ package com.company;
 import java.util.List;
 
 /**
- * Corresponde a una instruccion en la simulacion, tiene el codigo de la instruccion y los valores para resolverla/
+ * Corresponde a una instruccion en la simulacion, tiene el código de la instruccion y los valores para resolverla
  */
 public class Instruction {
     private List instruction;

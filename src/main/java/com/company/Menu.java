@@ -3,6 +3,12 @@ package com.company;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * Maneja el menu y los datos que puso el usuario para iniciar la simulacion
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class Menu {
 
     private static final String PATH = "./src/main/java/resources/";

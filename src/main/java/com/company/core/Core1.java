@@ -14,6 +14,9 @@ public class Core1 extends Core {
     private DataCache otherDataCache;
     private InstructionCache myInstructionCache;
 
+    /**
+     * Constructor
+     */
     public Core1(Context context, Processor processor,DataCache myDataCache,DataCache otherDataCache,
                  InstructionCache myInstructionCache,String name) {
         super(context, processor);
@@ -25,6 +28,9 @@ public class Core1 extends Core {
         thread.start();
     }
 
+    /**
+     * Maneja el cambio de ciclo en el core. 
+     */
     public void checkStatus() {
         if(this.mainContext.getContext() != null){
             if (this.mainContext.getContext().isDone()) {                                                //si ya termino
