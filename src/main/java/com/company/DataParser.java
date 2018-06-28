@@ -27,7 +27,7 @@ public class DataParser {
     }
 
     /**
-     * Parsea el archivo indicando, creando contextos y agregándolos a la cola.
+     * Parsea el archivo indicado, creando contextos y agregándolos a la cola.
      * @param filename corresponde al nombre del archivo a cargar.
      */
     public void parseFile(String filename) {
@@ -77,5 +77,9 @@ public class DataParser {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public Processor getProcessor() {
+        return processor;
     }
 }

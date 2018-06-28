@@ -61,11 +61,11 @@ public class MainThread implements Runnable{
             }
             this.cycleCount ++;
         }
-        System.out.println("La simulacion duro un total de: " + this.processor.getClock() + " ciclos");
+        System.out.println("La simulacion duro un total de: " + this.processor.getClock() + " ciclos. \n ");
         for (int i = 0; i < this.processor.getFinishedContexts().size(); i++) {
             Context context = (Context) this.processor.getFinishedContexts().get(i);
             context.printRegisters();
-            System.out.println("Cantidad de ciclos del hilillo "+ context.getId() +": "+context.getCyclesCount());
+            System.out.println("Cantidad de ciclos del hilillo "+ context.getId() +": "+context.getCyclesCount() + "\n ");
         }
         this.processor.printMainMemory();
         System.out.println(this.processor.getCore1().getCacheCore0().toString());

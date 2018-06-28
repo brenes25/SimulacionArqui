@@ -10,9 +10,13 @@ import com.company.threads.MainThread;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Corresponde al procesador de la simulación
+ * @author Silvia Brenes
+ * @author María José Cubero
+ * @author Hernán Madrigal
+ */
 public class Processor {
-
-    private static final String PATH = "./src/main/java/resources/";
 
     private DataCache dataCacheCore0;
     private InstructionCache instructionCacheCore0;
@@ -43,10 +47,12 @@ public class Processor {
 
     private boolean isSlowRun;
 
+    private Menu menu;
+
     public int contextQueueInitialSize;
 
     public Processor() {
-        lock1 = new Object();
+        this.lock1 = new Object();
         this.mainMemory = new ArrayList<DataBlock>();
         this.fillMainMemory();
         this.instructionMemory = new ArrayList<InstructionBlock>();
@@ -61,17 +67,18 @@ public class Processor {
         this.cyclicBarrier = new CyclicBarrier(3);
 
         this.dataParser = new DataParser(this);
+        this.menu = new Menu(this.quantum, this.dataParser);
+        this.isSlowRun = this.menu.userStart();
         this.dataCacheCore0 = new DataCache("0");
         this.dataCacheCore1 = new DataCache("1");
         this.instructionCacheCore0 = new InstructionCache();
         this.instructionCacheCore1 = new InstructionCache();
-        this.userStart();
+
         this.contextQueueInitialSize = this.contextQueue.size();
         this.mainThread = new MainThread(this);
         Thread controllerThread = new Thread(mainThread);
         controllerThread.start();
 
-        //this.core0 = new Core0((Context) this.contextQueue.poll(), this);
         this.core1 = new Core1((Context) this.contextQueue.poll(), this,
                 this.dataCacheCore0, this.dataCacheCore1,
                 this.instructionCacheCore0,"1");
@@ -81,7 +88,7 @@ public class Processor {
     }
 
 
-    public void printInstructionMemory (){
+    private void printInstructionMemory (){
         for (int i = 0; i < instructionMemory.size(); i++) {
             InstructionBlock instructionBlock = (InstructionBlock) instructionMemory.get(i);
             List instructionBlockList = instructionBlock.getInstructions();
@@ -97,62 +104,56 @@ public class Processor {
         }
     }
 
+    /**
+     * Imprime los valores de la memoria principal.
+     */
     public void printMainMemory (){
 
-        System.out.println("----------- MEMORIA -----------");
+        System.out.println(" ----- Memoria Principal ----- ");
         int counter = 0;
         for (int i = 0; i < mainMemory.size(); i++) {
             DataBlock dataBlock = (DataBlock) mainMemory.get(i);
             List data = dataBlock.getWords();
             for (int j = 0; j < data.size(); j++) {
                 System.out.print(data.get(j));
+                if(data.get(j).toString().length() == 1)
+                    System.out.print(" ");
                 System.out.print(" ");
             }
-            System.out.print("|");
+            System.out.print("|  ");
             counter++;
             if(counter == 4){
                 System.out.println();
                 counter = 0;
             }
         }
+        System.out.println(" ");
     }
 
+    /**
+     * Guarda un bloque en una posicion de memoria.
+     * @param index posicion de memoria
+     * @param dataBlock el bloque que se quiere guardar.
+     */
     public void saveInMemory(int index,DataBlock dataBlock){
         DataBlock dataBlock1 = new DataBlock();
         Collections.copy(dataBlock1.getWords(), dataBlock.getWords());
         this.mainMemory.set(index,dataBlock1);
     }
 
-    public void userStart(){
-//        Scanner input = new Scanner (System.in);
-//        System.out.println("Cual corrida quiere usar? \n 1. Lenta\n 2. Rapida\n");
-//        this.isSlowRun = Integer.parseInt(input.nextLine()) == 1;
-//
-//        System.out.println("Cuantos ciclos de reloj quiere que dure el quantum");
-//        this.quantum = Integer.parseInt(input.nextLine());
-//
-//        while(start){
-//            System.out.println("Cual hilillo quiere agregar en el sistema");
-//            this.dataParser.parseFile(PATH + input.nextLine());
-//            this.printInstructionMemory();
-//            System.out.println("Desea agregar mas hilillos?");
-//            if(input.nextLine().equals("no"))
-//                this.start = false;
-//        }
-        this.isSlowRun = false;
-        this.quantum = 40;
-        for (int i = 0; i < 6; i++) {
-            this.dataParser.parseFile(PATH + i+ ".txt");
-            this.printInstructionMemory();
-        }
-    }
-
+    /**
+     * Llena la memoria con bloques de memoria llenos de -1
+     */
     private void fillMainMemory(){
         for (int i = 0; i < 24; i++) {
             this.mainMemory.add(new DataBlock());
         }
     }
 
+    /**
+     * Agrega un nuevo bloque de instrucciones a la memoria de instrucciones.
+     * @param instructionBlock
+     */
     public void addNewInstruction(InstructionBlock instructionBlock){
         this.instructionMemory.add(instructionBlock);
     }
@@ -167,6 +168,10 @@ public class Processor {
 
     public int getQuantum() {
         return quantum;
+    }
+
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
     }
 
     public Queue getContextQueue() {
@@ -230,4 +235,6 @@ public class Processor {
     public boolean isSlowRun() {
         return isSlowRun;
     }
+
+
 }
